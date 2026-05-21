@@ -335,6 +335,7 @@ module.exports = async (req, res) => {
 
     // POST /api/checkout
     if (path === "/api/checkout" && req.method === "POST") {
+      const crypto = require("crypto");
       const { user_email, user_name, items, payment_method } = body;
       if (!user_email || !items || items.length === 0 || !payment_method) {
         res.statusCode = 400;
@@ -342,32 +343,117 @@ module.exports = async (req, res) => {
           JSON.stringify({ message: "Data checkout tidak lengkap." }),
         );
       }
+
+      // Hitung total & siapkan order items untuk Tripay
       let totalPrice = 0;
+      const orderItems = [];
       for (const item of items) {
-        totalPrice += item.price * item.qty;
+        const { rows: varRows } = await executeSQL(
+          "SELECT pv.*, p.name as product_name FROM product_variants pv JOIN products p ON pv.product_id=p.id WHERE pv.id=?",
+          [item.variant_id],
+        );
+        if (varRows.length > 0) {
+          const v = varRows[0];
+          const itemPrice = Number(v.sell_price);
+          totalPrice += itemPrice * item.qty;
+          orderItems.push({
+            sku: "VAR-" + v.id,
+            name:
+              v.product_name + " (" + v.account_type + " - " + v.duration + ")",
+            price: itemPrice,
+            quantity: item.qty,
+          });
+        } else {
+          totalPrice += item.price * item.qty;
+          orderItems.push({
+            sku: "ITEM",
+            name: "Produk",
+            price: item.price,
+            quantity: item.qty,
+          });
+        }
       }
+
       const merchantRef =
         "TRX-" +
         Date.now() +
         "-" +
         Math.random().toString(36).substring(2, 7).toUpperCase();
-      const { rows } = await executeSQL(
-        "INSERT INTO orders (user_email, variant_id, total_price, voucher_id, status) VALUES (?,?,?,?,'pending') RETURNING *",
+
+      // Simpan order ke DB
+      await executeSQL(
+        "INSERT INTO orders (user_email, variant_id, total_price, voucher_id, status) VALUES (?,?,?,?,'pending')",
         [user_email, items[0].variant_id, totalPrice, merchantRef],
       );
+
+      // Request ke Tripay
+      const TRIPAY_API_KEY = process.env.TRIPAY_API_KEY || "";
+      const TRIPAY_PRIVATE_KEY = process.env.TRIPAY_PRIVATE_KEY || "";
+      const TRIPAY_MERCHANT_CODE = process.env.TRIPAY_MERCHANT_CODE || "";
+      const TRIPAY_MODE = process.env.TRIPAY_MODE || "sandbox";
+      const tripayBase =
+        TRIPAY_MODE === "production"
+          ? "https://tripay.co.id/api"
+          : "https://tripay.co.id/api-sandbox";
+      const frontendUrl =
+        process.env.FRONTEND_URL || "https://zftweb-store.vercel.app";
+
+      const signature = crypto
+        .createHmac("sha256", TRIPAY_PRIVATE_KEY)
+        .update(TRIPAY_MERCHANT_CODE + merchantRef + String(totalPrice))
+        .digest("hex");
+
+      const tripayPayload = {
+        method: payment_method,
+        merchant_ref: merchantRef,
+        amount: totalPrice,
+        customer_name: user_name || "Customer",
+        customer_email: user_email,
+        order_items: orderItems,
+        callback_url: "https://zftweb-store.vercel.app/api/webhook/tripay",
+        return_url: frontendUrl + "/?order_success=" + merchantRef,
+        expired_time: Math.floor(Date.now() / 1000) + 24 * 60 * 60,
+        signature: signature,
+      };
+
+      const tripayRes = await fetch(tripayBase + "/transaction/create", {
+        method: "POST",
+        headers: {
+          Authorization: "Bearer " + TRIPAY_API_KEY,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(tripayPayload),
+      });
+      const tripayData = await tripayRes.json();
+
+      if (!tripayData.success) {
+        return res.end(
+          JSON.stringify({
+            status: "error",
+            message: "Tripay: " + (tripayData.message || "Unknown error"),
+            detail: tripayData,
+          }),
+        );
+      }
+
+      const td = tripayData.data;
       return res.end(
         JSON.stringify({
           status: "success",
-          order_id: rows[0].id,
           merchant_ref: merchantRef,
           total_price: totalPrice,
           payment: {
-            checkout_url: null,
-            qr_url: null,
-            payment_name: payment_method,
-            amount: totalPrice,
-            reference: merchantRef,
-            expired_time: Math.floor(Date.now() / 1000) + 86400,
+            reference: td.reference,
+            method: td.payment_method,
+            payment_name: td.payment_name,
+            amount: td.amount,
+            fee: td.total_fee,
+            checkout_url: td.checkout_url,
+            pay_code: td.pay_code,
+            pay_url: td.pay_url,
+            qr_string: td.qr_string,
+            qr_url: td.qr_url,
+            expired_time: td.expired_time,
           },
         }),
       );
