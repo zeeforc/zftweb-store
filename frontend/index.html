@@ -2151,13 +2151,8 @@
               // Tutup payment modal
               closePaymentWaiting();
 
-              // Tampilkan toast sukses
-              showToastMessage("Pembayaran berhasil! Mengalihkan ke profil...");
-
-              // Redirect ke profile setelah 1.5 detik
-              setTimeout(() => {
-                showProfileWithOrders();
-              }, 1500);
+              // Tampilkan popup sukses
+              showSuccessPopup();
             }
           } catch (e) {
             console.error("Polling error:", e);
@@ -2320,12 +2315,37 @@
             document.title,
             window.location.pathname,
           );
-          // Tampilkan profile dengan data order
+          // Tampilkan popup sukses di halaman utama
           setTimeout(() => {
-            showProfileWithOrders();
-            showToastMessage("Pembayaran berhasil! Berikut detail akun Anda.");
+            showSuccessPopup();
           }, 500);
         }
+      }
+
+      function showSuccessPopup() {
+        const popup = document.createElement("div");
+        popup.id = "success-popup";
+        popup.className =
+          "fixed inset-0 z-[200] flex items-center justify-center px-4";
+        popup.innerHTML = `
+          <div class="absolute inset-0 bg-gray-900/50 backdrop-blur-sm" onclick="closeSuccessPopup()"></div>
+          <div class="bg-white rounded-[2rem] w-full max-w-[400px] relative z-10 p-8 text-center shadow-2xl animate-modal-enter">
+            <div class="w-20 h-20 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-6">
+              <svg class="w-10 h-10 text-emerald-500" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <h2 class="text-2xl font-bold text-gray-900 mb-2">Pembayaran Berhasil!</h2>
+            <p class="text-gray-500 text-sm mb-6 leading-relaxed">Detail akun telah dikirim ke email Anda. Silakan cek inbox atau folder spam.</p>
+            <button onclick="closeSuccessPopup()" class="w-full bg-primary hover:bg-primaryHover text-white font-bold py-3.5 rounded-2xl transition-colors shadow-lg shadow-primary/30">
+              Oke, Mengerti
+            </button>
+          </div>
+        `;
+        document.body.appendChild(popup);
+      }
+
+      function closeSuccessPopup() {
+        const popup = document.getElementById("success-popup");
+        if (popup) popup.remove();
       }
 
       // Intersection Observer Logic & Setup Awal
