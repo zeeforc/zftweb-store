@@ -7,8 +7,12 @@ const TURSO_TOKEN = process.env.TURSO_AUTH_TOKEN || "";
 // Convert libsql:// URL to https:// for HTTP API
 function getHttpUrl() {
   let url = TURSO_URL;
+  if (!url) return "";
   if (url.startsWith("libsql://")) {
     url = url.replace("libsql://", "https://");
+  }
+  if (!url.startsWith("http")) {
+    url = "https://" + url;
   }
   return url;
 }
@@ -107,6 +111,20 @@ module.exports = async (req, res) => {
   }
 
   try {
+    // Debug: check env
+    if (path === "/api/debug" && req.method === "GET") {
+      return res.end(
+        JSON.stringify({
+          turso_url_set: !!TURSO_URL,
+          turso_url_preview: TURSO_URL
+            ? TURSO_URL.substring(0, 30) + "..."
+            : "EMPTY",
+          turso_token_set: !!TURSO_TOKEN,
+          http_url: getHttpUrl(),
+        }),
+      );
+    }
+
     // GET /api/products
     if (path === "/api/products" && req.method === "GET") {
       const { rows: products } = await executeSQL(
