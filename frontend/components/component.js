@@ -40,12 +40,12 @@ function renderNavbar() {
             <div class="hidden sm:block w-px h-6 bg-gray-200"></div>
             
             <!-- Link ke Profile -->
-            <button onclick="showProfile(event)" class="hidden sm:flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors group">
-              <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs shadow-sm group-hover:shadow-primary/30 transition-all">
-                  BS
-              </div>
-              <span class="hidden lg:block">Budi Santoso</span>
-            </button>
+            // <button onclick="showProfile(event)" class="hidden sm:flex items-center gap-2 text-sm font-medium text-gray-700 hover:text-primary transition-colors group">
+            //   <div class="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center font-bold text-xs shadow-sm group-hover:shadow-primary/30 transition-all">
+            //       BS
+            //   </div>
+            //   <span class="hidden lg:block">Budi Santoso</span>
+            // </button>
             <button class="md:hidden text-gray-500"><i data-lucide="menu" class="w-6 h-6"></i></button>
           </div>
         </div>
