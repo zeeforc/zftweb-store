@@ -1273,6 +1273,7 @@
     </div>
     <div id="footer-container"></div>
 
+    <script src="assets/js/config.js"></script>
     <script src="components/component.js"></script>
 
     <script>
@@ -1291,7 +1292,7 @@
 
           async fetchProducts() {
             try {
-              const res = await fetch("http://localhost:3000/api/products");
+              const res = await fetch(`${API_BASE}/api/products`);
               if (res.ok) {
                 const data = await res.json();
 
@@ -1884,7 +1885,7 @@
         }
 
         try {
-          const response = await fetch("http://localhost:3000/api/checkout", {
+          const response = await fetch(`${API_BASE}/api/checkout`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
@@ -2000,7 +2001,7 @@
         paymentPollingInterval = setInterval(async () => {
           try {
             const res = await fetch(
-              `http://localhost:3000/api/orders/status?merchant_ref=${merchantRef}`,
+              `${API_BASE}/api/orders/status?merchant_ref=${merchantRef}`,
             );
             const data = await res.json();
 
@@ -2036,7 +2037,7 @@
 
         try {
           const res = await fetch(
-            `http://localhost:3000/api/orders/my-items?email=${encodeURIComponent(email)}`,
+            `${API_BASE}/api/orders/my-items?email=${encodeURIComponent(email)}`,
           );
           if (!res.ok) return;
           const orders = await res.json();

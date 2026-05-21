@@ -88,6 +88,12 @@
     </style>
 
     <script>
+      // API Base URL - otomatis detect environment
+      const API_BASE =
+        window.location.hostname === "localhost" ? "http://localhost:3000" : "";
+    </script>
+
+    <script>
       function adminApp() {
         return {
           tab: "dashboard",
@@ -147,9 +153,7 @@
 
           async fetchProducts() {
             try {
-              const response = await fetch(
-                "http://localhost:3000/api/products",
-              );
+              const response = await fetch(API_BASE + "/api/products");
               if (response.ok) {
                 const result = await response.json();
                 this.productsData = result;
@@ -215,8 +219,8 @@
               };
 
               const endpoint = this.isEditMode
-                ? `http://localhost:3000/api/admin/products/${this.editProductId}`
-                : "http://localhost:3000/api/admin/products";
+                ? API_BASE + "/api/admin/products/" + this.editProductId
+                : API_BASE + "/api/admin/products";
 
               const method = this.isEditMode ? "PUT" : "POST";
 
@@ -307,7 +311,7 @@
               const newStatus = currentStatus === false ? true : false;
 
               const response = await fetch(
-                `http://localhost:3000/api/admin/variants/${variantId}/status`,
+                API_BASE + "/api/admin/variants/" + variantId + "/status",
                 {
                   method: "PATCH",
                   headers: { "Content-Type": "application/json" },
@@ -395,14 +399,11 @@
                 status_web: this.stockForm.status,
               };
 
-              const response = await fetch(
-                "http://localhost:3000/api/admin/inventory",
-                {
-                  method: "POST",
-                  headers: { "Content-Type": "application/json" },
-                  body: JSON.stringify(payload),
-                },
-              );
+              const response = await fetch(API_BASE + "/api/admin/inventory", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload),
+              });
 
               if (response.ok) {
                 this.isStockModalOpen = false;

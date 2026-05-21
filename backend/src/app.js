@@ -1,5 +1,11 @@
-const fastify = require("fastify")({ logger: true, bodyLimit: 10485760 });
+const fastify = require("fastify")({ logger: false, bodyLimit: 10485760 });
 const fastifyCors = require("@fastify/cors");
+
+// Di Vercel env vars di-inject langsung
+try {
+  require("dotenv").config();
+} catch (e) {}
+
 const db = require("./config/database");
 
 // 1. IMPORT CONTROLLER

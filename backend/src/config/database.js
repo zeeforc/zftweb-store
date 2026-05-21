@@ -1,5 +1,9 @@
 const { createClient } = require("@libsql/client");
-require("dotenv").config();
+
+// Di Vercel, env vars di-inject langsung. Dotenv hanya untuk local dev.
+try {
+  require("dotenv").config();
+} catch (e) {}
 
 const db = createClient({
   url: process.env.TURSO_DATABASE_URL || "file:./data/zftstoree.db",

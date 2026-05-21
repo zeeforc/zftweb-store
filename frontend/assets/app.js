@@ -49,7 +49,7 @@ document.addEventListener("alpine:init", () => {
     // -----------------------------------------------------------------
     async fetchInventory() {
       try {
-        const response = await fetch("http://localhost:3000/api/products");
+        const response = await fetch(API_BASE + "/api/products");
         if (response.ok) {
           const data = await response.json();
           this.inventoryData = data;
@@ -75,27 +75,23 @@ document.addEventListener("alpine:init", () => {
     // -----------------------------------------------------------------
     async submitProduct() {
       try {
-        const response = await fetch(
-          "http://localhost:3000/api/admin/products",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            // Cocokkan mapping dengan yang diharapkan controller lu
-            body: JSON.stringify({
-              name: this.newProduct.name,
-              category: this.newProduct.category,
-              description: this.newProduct.description,
-              short_description: this.newProduct.short_description,
-              image_url: this.newProduct.image_url,
-              variants: this.variants.map((v) => ({
-                type: v.type,
-                dur: v.dur,
-                cost_price: v.cost,
-                price: v.price,
-              })),
-            }),
-          },
-        );
+        const response = await fetch(API_BASE + "/api/admin/products", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: this.newProduct.name,
+            category: this.newProduct.category,
+            description: this.newProduct.description,
+            short_description: this.newProduct.short_description,
+            image_url: this.newProduct.image_url,
+            variants: this.variants.map((v) => ({
+              type: v.type,
+              dur: v.dur,
+              cost_price: v.cost,
+              price: v.price,
+            })),
+          }),
+        });
 
         if (response.ok) {
           this.showToast(
@@ -104,8 +100,6 @@ document.addEventListener("alpine:init", () => {
             "success",
           );
           this.isModalOpen = false;
-
-          // Reset form ke posisi awal
           this.newProduct = {
             name: "",
             category: "Streaming",
@@ -116,8 +110,6 @@ document.addEventListener("alpine:init", () => {
           this.variants = [
             { type: "Sharing 1P1U", dur: "1 Bulan", cost: 0, price: 0 },
           ];
-
-          // Refresh list produk
           await this.fetchInventory();
         } else {
           const errData = await response.json();
@@ -145,16 +137,13 @@ document.addEventListener("alpine:init", () => {
         return;
 
       try {
-        const response = await fetch(
-          `http://localhost:3000/api/admin/products/${id}`,
-          {
-            method: "DELETE",
-          },
-        );
+        const response = await fetch(API_BASE + "/api/admin/products/" + id, {
+          method: "DELETE",
+        });
 
         if (response.ok) {
           this.showToast("Berhasil", "Produk berhasil dihapus!", "success");
-          await this.fetchInventory(); // Refresh tabel otomatis
+          await this.fetchInventory();
         } else {
           this.showToast("Gagal", "Gagal hapus produk.", "error");
         }
@@ -169,21 +158,16 @@ document.addEventListener("alpine:init", () => {
     // -----------------------------------------------------------------
     async submitStock() {
       try {
-        const response = await fetch(
-          "http://localhost:3000/api/admin/inventory",
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(this.newStock),
-          },
-        );
+        const response = await fetch(API_BASE + "/api/admin/inventory", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(this.newStock),
+        });
 
         if (response.ok) {
           this.showToast("Mantap!", "Stok akun berhasil disuntik.", "success");
           this.isModalOpen = false;
-          // Reset form restock
           this.newStock = { variant_id: "", accounts: "" };
-          // Refresh tabel biar angkanya berubah
           await this.fetchInventory();
         } else {
           this.showToast("Gagal", "Format salah atau API error.", "error");
@@ -202,24 +186,26 @@ document.addEventListener("alpine:init", () => {
       const iconColor = type === "success" ? "text-success" : "text-danger";
       const iconName = type === "success" ? "check-circle" : "alert-circle";
 
-      toast.className = `bg-white p-4 rounded-2xl shadow-card border border-gray-100 flex items-start gap-4 transform transition-all duration-300 translate-x-10 opacity-0 min-w-[300px]`;
-      toast.innerHTML = `
-        <div class="mt-0.5"><i data-lucide="${iconName}" class="w-6 h-6 ${iconColor}"></i></div>
-        <div>
-            <h4 class="font-extrabold text-dark text-sm">${title}</h4>
-            <p class="text-xs text-lightText font-medium mt-0.5">${msg}</p>
-        </div>
-      `;
+      toast.className =
+        "bg-white p-4 rounded-2xl shadow-card border border-gray-100 flex items-start gap-4 transform transition-all duration-300 translate-x-10 opacity-0 min-w-[300px]";
+      toast.innerHTML =
+        '<div class="mt-0.5"><i data-lucide="' +
+        iconName +
+        '" class="w-6 h-6 ' +
+        iconColor +
+        '"></i></div><div><h4 class="font-extrabold text-dark text-sm">' +
+        title +
+        '</h4><p class="text-xs text-lightText font-medium mt-0.5">' +
+        msg +
+        "</p></div>";
 
       document.getElementById("toast-container").appendChild(toast);
       if (typeof lucide !== "undefined") lucide.createIcons({ root: toast });
 
-      // Animate in
       requestAnimationFrame(() => {
         toast.classList.remove("translate-x-10", "opacity-0");
       });
 
-      // Animate out and remove after 3s
       setTimeout(() => {
         toast.classList.add("translate-x-10", "opacity-0");
         setTimeout(() => toast.remove(), 300);
