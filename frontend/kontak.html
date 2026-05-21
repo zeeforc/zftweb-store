@@ -1,0 +1,217 @@
+<!doctype html>
+<html lang="id" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kontak Support | ZFTStore</title>
+
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=general-sans@300,400,500,600,700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["General Sans", "sans-serif"],
+            },
+            colors: {
+              primary: "#4F46E5",
+              primaryHover: "#4338CA",
+              surface: "#F9FAFB",
+            },
+          },
+        },
+      };
+    </script>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+      .section-card {
+        @apply bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-100 mb-6;
+      }
+      .section-title {
+        @apply text-lg font-bold text-gray-900 mb-4 pb-3 border-b border-gray-100 flex items-center gap-2;
+      }
+      .content-list li {
+        @apply relative pl-6 py-1.5 text-gray-600 leading-relaxed;
+      }
+      .content-list li::before {
+        content: "";
+        @apply absolute left-0 top-3.5 w-2 h-2 rounded-full bg-primary/30;
+      }
+      .ordered-list li {
+        @apply py-1.5 text-gray-600 leading-relaxed;
+      }
+    </style>
+  </head>
+
+  <body class="font-sans bg-surface text-gray-800 antialiased">
+    <div id="navbar-container"></div>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-16 overflow-hidden">
+      <div
+        class="absolute inset-0 bg-gradient-to-br from-primary/5 via-white to-indigo-50"
+      ></div>
+      <div
+        class="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl"
+      ></div>
+      <div
+        class="absolute bottom-10 right-10 w-96 h-96 bg-indigo-100/40 rounded-full blur-3xl"
+      ></div>
+      <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <a
+          href="/"
+          class="inline-flex items-center gap-2 text-sm text-primary font-medium mb-6 hover:underline"
+        >
+          <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali ke Beranda
+        </a>
+        <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+          Kontak Support
+        </h1>
+        <p class="text-gray-500 max-w-2xl mx-auto">
+          Hubungi tim support resmi ZFTStore
+        </p>
+      </div>
+    </section>
+
+    <!-- Content -->
+    <section class="pb-20">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Intro -->
+        <div class="section-card">
+          <p class="text-gray-600 leading-relaxed">
+            Jika Anda mengalami kendala terkait pesanan, pembayaran, pengiriman,
+            atau layanan lainnya, silakan hubungi support resmi ZFTStore melalui
+            informasi di bawah ini.
+          </p>
+        </div>
+
+        <!-- Info Kontak -->
+        <div class="section-card">
+          <h2 class="section-title">
+            <span
+              class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center"
+            >
+              <i data-lucide="headphones" class="w-4 h-4"></i>
+            </span>
+            Informasi Kontak
+          </h2>
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <!-- Website -->
+            <div
+              class="flex items-start gap-4 p-4 bg-surface rounded-xl border border-gray-100"
+            >
+              <div
+                class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0"
+              >
+                <i data-lucide="globe" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500 font-medium mb-1">Website</p>
+                <a
+                  href="https://www.zfts.store/"
+                  class="text-primary font-semibold hover:underline text-sm"
+                  >https://www.zfts.store/</a
+                >
+              </div>
+            </div>
+            <!-- Email -->
+            <div
+              class="flex items-start gap-4 p-4 bg-surface rounded-xl border border-gray-100"
+            >
+              <div
+                class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0"
+              >
+                <i data-lucide="mail" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500 font-medium mb-1">Email</p>
+                <a
+                  href="mailto:support@zfts.store"
+                  class="text-primary font-semibold hover:underline text-sm"
+                  >support@zfts.store</a
+                >
+              </div>
+            </div>
+            <!-- Jam Operasional -->
+            <div
+              class="flex items-start gap-4 p-4 bg-surface rounded-xl border border-gray-100 sm:col-span-2"
+            >
+              <div
+                class="w-10 h-10 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0"
+              >
+                <i data-lucide="clock" class="w-5 h-5"></i>
+              </div>
+              <div>
+                <p class="text-sm text-gray-500 font-medium mb-1">
+                  Jam Operasional
+                </p>
+                <p class="text-gray-900 font-semibold text-sm">
+                  Setiap hari, 09.00 – 22.00 WIB
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Informasi yang Perlu Disertakan -->
+        <div class="section-card">
+          <h2 class="section-title">
+            <span
+              class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center"
+            >
+              <i data-lucide="clipboard-list" class="w-4 h-4"></i>
+            </span>
+            Informasi yang Perlu Disertakan
+          </h2>
+          <p class="text-gray-600 leading-relaxed mb-4">
+            Saat menghubungi support, mohon sertakan informasi berikut agar kami
+            dapat membantu Anda lebih cepat:
+          </p>
+          <ol class="ordered-list list-decimal list-inside space-y-1">
+            <li>Nama lengkap</li>
+            <li>Email yang digunakan saat checkout</li>
+            <li>Nomor pesanan (Order ID)</li>
+            <li>Nama produk yang dibeli</li>
+            <li>Bukti pembayaran (jika diperlukan)</li>
+            <li>Penjelasan kendala yang dialami</li>
+          </ol>
+        </div>
+
+        <!-- Catatan -->
+        <div class="section-card">
+          <div class="p-4 bg-blue-50 border border-blue-100 rounded-xl">
+            <p
+              class="text-sm text-blue-800 leading-relaxed flex items-start gap-2"
+            >
+              <i data-lucide="info" class="w-4 h-4 mt-0.5 flex-shrink-0"></i>
+              <span
+                >Kami akan membantu Anda sesuai antrean dan jam operasional yang
+                berlaku. Mohon bersabar menunggu balasan dari tim support
+                kami.</span
+              >
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="footer-container"></div>
+
+    <script src="/assets/js/config.js"></script>
+    <script src="/components/component.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        if (typeof lucide !== "undefined") {
+          lucide.createIcons();
+        }
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="id" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Kebijakan Pengiriman Produk Digital | ZFTStore</title>
+
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=general-sans@300,400,500,600,700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["General Sans", "sans-serif"],
+            },
+            colors: {
+              primary: "#4F46E5",
+              primaryHover: "#4338CA",
+              surface: "#F9FAFB",
+            },
+          },
+        },
+      };
+    </script>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+      .section-card {
+        @apply bg-white rounded-2xl p-6 sm:p-8 shadow-sm border border-gray-100 mb-6;
+      }
+      .section-title {
+        @apply text-lg font-bold text-gray-900 mb-4 pb-3 border-b border-gray-100 flex items-center gap-2;
+      }
+      .content-list li {
+        @apply relative pl-6 py-1.5 text-gray-600 leading-relaxed;
+      }
+      .content-list li::before {
+        content: "";
+        @apply absolute left-0 top-3.5 w-2 h-2 rounded-full bg-primary/30;
+      }
+      .ordered-list li {
+        @apply py-1.5 text-gray-600 leading-relaxed;
+      }
+    </style>
+  </head>
+
+  <body class="font-sans bg-surface text-gray-800 antialiased">
+    <div id="navbar-container"></div>
+
+    <!-- Hero Section -->
+    <section class="relative pt-32 pb-16 overflow-hidden">
+      <div
+        class="absolute inset-0 bg-gradient-to-br from-primary/5 via-white to-indigo-50"
+      ></div>
+      <div
+        class="absolute top-20 left-10 w-72 h-72 bg-primary/5 rounded-full blur-3xl"
+      ></div>
+      <div
+        class="absolute bottom-10 right-10 w-96 h-96 bg-indigo-100/40 rounded-full blur-3xl"
+      ></div>
+      <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <a
+          href="/"
+          class="inline-flex items-center gap-2 text-sm text-primary font-medium mb-6 hover:underline"
+        >
+          <i data-lucide="arrow-left" class="w-4 h-4"></i> Kembali ke Beranda
+        </a>
+        <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+          Kebijakan Pengiriman Produk Digital
+        </h1>
+        <p class="text-gray-500 max-w-2xl mx-auto">
+          Informasi pengiriman produk digital ZFTStore
+        </p>
+      </div>
+    </section>
+
+    <!-- Content -->
+    <section class="pb-20">
+      <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <!-- Intro -->
+        <div class="section-card">
+          <p class="text-gray-600 leading-relaxed">
+            Seluruh produk yang dijual di ZFTStore merupakan
+            <strong>produk digital</strong>. Tidak ada pengiriman fisik melalui
+            jasa ekspedisi atau kurir.
+          </p>
+        </div>
+
+        <!-- Metode Pengiriman -->
+        <div class="section-card">
+          <h2 class="section-title">
+            <span
+              class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-sm font-bold"
+              >1</span
+            >
+            Metode Pengiriman
+          </h2>
+          <p class="text-gray-600 leading-relaxed mb-4">
+            Setelah pembayaran berhasil diverifikasi, produk digital akan
+            dikirimkan kepada pelanggan melalui <strong>email</strong>.
+            Pengiriman dapat berupa:
+          </p>
+          <ul class="content-list space-y-1">
+            <li>Kredensial akun (email & password)</li>
+            <li>Kode akses atau lisensi</li>
+            <li>Instruksi aktivasi produk</li>
+          </ul>
+        </div>
+
+        <!-- Estimasi Waktu -->
+        <div class="section-card">
+          <h2 class="section-title">
+            <span
+              class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-sm font-bold"
+              >2</span
+            >
+            Estimasi Waktu Pengiriman
+          </h2>
+          <p class="text-gray-600 leading-relaxed mb-3">
+            Produk digital akan diproses dan dikirimkan setelah pembayaran
+            terverifikasi oleh sistem. Pada umumnya, pengiriman dilakukan dalam
+            waktu singkat setelah konfirmasi pembayaran.
+          </p>
+          <p class="text-gray-600 leading-relaxed">
+            Namun, dalam beberapa kondisi tertentu, waktu pengiriman
+            <strong>bisa lebih lama</strong> dari biasanya karena:
+          </p>
+          <ul class="content-list space-y-1 mt-3">
+            <li>Kendala teknis pada sistem</li>
+            <li>Ketersediaan stok produk</li>
+            <li>
+              Gangguan dari pihak ketiga (payment gateway, platform terkait)
+            </li>
+          </ul>
+        </div>
+
+        <!-- Kendala Pengiriman -->
+        <div class="section-card">
+          <h2 class="section-title">
+            <span
+              class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-sm font-bold"
+              >3</span
+            >
+            Kendala Pengiriman
+          </h2>
+          <p class="text-gray-600 leading-relaxed mb-4">
+            Jika pelanggan belum menerima produk dalam waktu yang wajar setelah
+            pembayaran berhasil, silakan hubungi support resmi kami dengan
+            menyertakan:
+          </p>
+          <ul class="content-list space-y-1">
+            <li>Nomor pesanan (Order ID)</li>
+            <li>Bukti pembayaran</li>
+          </ul>
+          <p class="text-gray-600 leading-relaxed mt-4">
+            Tim kami akan segera membantu menyelesaikan kendala yang dialami.
+          </p>
+        </div>
+
+        <!-- Kesalahan Data -->
+        <div class="section-card">
+          <h2 class="section-title">
+            <span
+              class="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-sm font-bold"
+              >4</span
+            >
+            Kesalahan Data Pelanggan
+          </h2>
+          <p class="text-gray-600 leading-relaxed">
+            Pelanggan <strong>bertanggung jawab penuh</strong> untuk memastikan
+            bahwa email dan data yang diinput saat checkout sudah benar.
+            Kesalahan dalam pengisian data (terutama alamat email) dapat
+            menyebabkan produk terkirim ke pihak yang salah, dan ZFTStore tidak
+            bertanggung jawab atas hal tersebut.
+          </p>
+          <div class="mt-6 p-4 bg-amber-50 border border-amber-100 rounded-xl">
+            <p
+              class="text-sm text-amber-800 leading-relaxed flex items-start gap-2"
+            >
+              <i
+                data-lucide="alert-triangle"
+                class="w-4 h-4 mt-0.5 flex-shrink-0"
+              ></i>
+              <span
+                >Pastikan email dan seluruh data yang Anda masukkan sudah benar
+                sebelum menyelesaikan pembayaran.</span
+              >
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div id="footer-container"></div>
+
+    <script src="/assets/js/config.js"></script>
+    <script src="/components/component.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        if (typeof lucide !== "undefined") {
+          lucide.createIcons();
+        }
+      });
+    </script>
+  </body>
+</html>

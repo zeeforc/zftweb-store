@@ -278,47 +278,47 @@ function renderFooter() {
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="grid grid-cols-1 md:grid-cols-4 gap-12 md:gap-8 mb-12">
           <div class="md:col-span-1">
-            <a href="#" onclick="showHome(event)" class="flex items-center gap-2 text-xl font-bold text-gray-900 tracking-tight mb-4">
+            <a href="/" class="flex items-center gap-2 text-xl font-bold text-gray-900 tracking-tight mb-4">
               <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
                 <i data-lucide="layers" class="w-5 h-5"></i>
               </div>
-              AppStoreHub
+              ZFTStore
             </a>
             <p class="text-sm text-gray-500 leading-relaxed mb-6">
-              Destinasi terpercaya Anda untuk berlangganan aplikasi premium yang terjangkau. Cepat, aman, dan dapat diandalkan.
+              Platform penjualan produk digital premium yang terpercaya. Cepat, aman, dan terjangkau.
             </p>
             <div class="flex gap-4 text-gray-400">
-                <a href="#" class="hover:text-primary transition-colors"><i data-lucide="facebook" class="w-5 h-5"></i></a>
-                <a href="#" class="hover:text-primary transition-colors"><i data-lucide="twitter" class="w-5 h-5"></i></a>
                 <a href="#" class="hover:text-primary transition-colors"><i data-lucide="instagram" class="w-5 h-5"></i></a>
+                <a href="mailto:support@zfts.store" class="hover:text-primary transition-colors"><i data-lucide="mail" class="w-5 h-5"></i></a>
             </div>
           </div>
           <div>
             <h3 class="font-bold text-gray-900 mb-4">Platform</h3>
             <ul class="space-y-3">
-              <li><a href="#apps" onclick="showHome(event)" class="text-sm text-gray-500 hover:text-primary transition-colors">Jelajahi Aplikasi</a></li>
-              <li><a href="#categories" onclick="showHome(event)" class="text-sm text-gray-500 hover:text-primary transition-colors">Kategori</a></li>
-              <li><a href="#pricing" onclick="showHome(event)" class="text-sm text-gray-500 hover:text-primary transition-colors">Daftar Harga</a></li>
+              <li><a href="/#pricing" class="text-sm text-gray-500 hover:text-primary transition-colors">Jelajahi Aplikasi</a></li>
+              <li><a href="/#categories" class="text-sm text-gray-500 hover:text-primary transition-colors">Kategori</a></li>
+              <li><a href="/#tentang-kami" class="text-sm text-gray-500 hover:text-primary transition-colors">Tentang Kami</a></li>
+              <li><a href="/#faq" class="text-sm text-gray-500 hover:text-primary transition-colors">FAQ</a></li>
             </ul>
           </div>
           <div>
             <h3 class="font-bold text-gray-900 mb-4">Dukungan</h3>
             <ul class="space-y-3">
-              <li><a href="#" class="text-sm text-gray-500 hover:text-primary transition-colors">Pusat Bantuan</a></li>
-              <li><a href="#" class="text-sm text-gray-500 hover:text-primary transition-colors">Hubungi Kami</a></li>
-              <li><a href="#" class="text-sm text-gray-500 hover:text-primary transition-colors">FAQ</a></li>
+              <li><a href="/kontak.html" class="text-sm text-gray-500 hover:text-primary transition-colors">Kontak Support</a></li>
+              <li><a href="/kebijakan-pengiriman.html" class="text-sm text-gray-500 hover:text-primary transition-colors">Kebijakan Pengiriman</a></li>
+              <li><a href="/kebijakan-refund.html" class="text-sm text-gray-500 hover:text-primary transition-colors">Kebijakan Refund</a></li>
             </ul>
           </div>
           <div>
             <h3 class="font-bold text-gray-900 mb-4">Legal</h3>
             <ul class="space-y-3">
-              <li><a href="#" class="text-sm text-gray-500 hover:text-primary transition-colors">Kebijakan Privasi</a></li>
-              <li><a href="#" class="text-sm text-gray-500 hover:text-primary transition-colors">Syarat & Ketentuan</a></li>
+              <li><a href="/syarat-ketentuan.html" class="text-sm text-gray-500 hover:text-primary transition-colors">Syarat & Ketentuan</a></li>
+              <li><a href="/kebijakan-privasi.html" class="text-sm text-gray-500 hover:text-primary transition-colors">Kebijakan Privasi</a></li>
             </ul>
           </div>
         </div>
         <div class="border-t border-gray-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <p class="text-sm text-gray-500">&copy; 2026 AppStoreHub. Hak Cipta Dilindungi.</p>
+          <p class="text-sm text-gray-500">&copy; 2026 ZFTStore. Hak Cipta Dilindungi.</p>
           <div class="flex items-center gap-2">
               <div class="w-10 h-6 bg-gray-100 rounded flex items-center justify-center text-[10px] font-bold text-gray-400">QRIS</div>
               <div class="w-10 h-6 bg-gray-100 rounded flex items-center justify-center text-[10px] font-bold text-gray-400">DANA</div>

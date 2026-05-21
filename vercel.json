@@ -18,6 +18,26 @@
       "dest": "/frontend/components/$1"
     },
     {
+      "src": "/syarat-ketentuan(\\.html)?",
+      "dest": "/frontend/syarat-ketentuan.html"
+    },
+    {
+      "src": "/kebijakan-privasi(\\.html)?",
+      "dest": "/frontend/kebijakan-privasi.html"
+    },
+    {
+      "src": "/kebijakan-refund(\\.html)?",
+      "dest": "/frontend/kebijakan-refund.html"
+    },
+    {
+      "src": "/kebijakan-pengiriman(\\.html)?",
+      "dest": "/frontend/kebijakan-pengiriman.html"
+    },
+    {
+      "src": "/kontak(\\.html)?",
+      "dest": "/frontend/kontak.html"
+    },
+    {
       "src": "/",
       "dest": "/frontend/index.html"
     }

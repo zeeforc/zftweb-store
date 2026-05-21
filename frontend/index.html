@@ -50,6 +50,10 @@
     </script>
 
     <script
+      src="https://cdn.jsdelivr.net/npm/@alpinejs/collapse@3.13.3/dist/cdn.min.js"
+      defer
+    ></script>
+    <script
       src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"
       defer
     ></script>
@@ -707,6 +711,141 @@
               Muat lebih banyak
               <i data-lucide="chevron-down" class="w-4 h-4"></i>
             </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TENTANG KAMI -->
+      <section
+        id="tentang-kami"
+        class="py-20 bg-white border-t border-gray-100"
+      >
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-12 reveal">
+            <div
+              class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-4"
+            >
+              <i data-lucide="building-2" class="w-4 h-4"></i> Tentang Kami
+            </div>
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">
+              Kenali ZFTStore Lebih Dekat
+            </h2>
+          </div>
+          <div class="space-y-6 reveal">
+            <p class="text-gray-600 leading-relaxed">
+              ZFTStore adalah platform penjualan produk digital yang menyediakan
+              akses dan langganan aplikasi premium secara online. Kami
+              menghadirkan berbagai pilihan produk digital untuk kebutuhan
+              hiburan, desain, produktivitas, editing, AI tools, musik, gaming,
+              dan penyimpanan cloud.
+            </p>
+            <p class="text-gray-600 leading-relaxed">
+              Melalui ZFTStore, pelanggan dapat membeli produk digital dengan
+              proses yang mudah, cepat, dan aman. Seluruh transaksi dilakukan
+              melalui website resmi kami di
+              <a
+                href="https://www.zfts.store/"
+                class="text-primary font-medium hover:underline"
+                >https://www.zfts.store/</a
+              >, mulai dari pemilihan produk, pengisian data pembeli, checkout,
+              pembayaran, hingga pengiriman detail produk.
+            </p>
+            <p class="text-gray-600 leading-relaxed">
+              Produk yang kami jual bersifat digital dan tidak dikirimkan dalam
+              bentuk barang fisik. Setelah pembayaran berhasil, detail produk,
+              kredensial akun, atau instruksi penggunaan akan dikirimkan ke
+              email pelanggan yang telah diisi pada halaman checkout.
+            </p>
+            <p class="text-gray-600 leading-relaxed">
+              Kami berkomitmen untuk memberikan layanan yang jelas, transparan,
+              dan mudah digunakan agar pelanggan dapat menikmati produk digital
+              premium dengan harga yang lebih terjangkau.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <!-- FAQ -->
+      <section id="faq" class="py-20 bg-surface border-t border-gray-100">
+        <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-12 reveal">
+            <p
+              class="text-primary font-semibold text-sm uppercase tracking-widest mb-3"
+            >
+              Frequently Asked Questions
+            </p>
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">
+              Butuh Jawaban Cepat?
+            </h2>
+            <p class="text-gray-500 max-w-2xl mx-auto">
+              Kami telah merangkum beberapa hal yang sering ditanyakan pelanggan
+              kami.
+            </p>
+          </div>
+
+          <div class="reveal" x-data="{ search: '', expandAll: false }">
+            <!-- Search + Expand All -->
+            <div
+              class="flex items-center gap-3 mb-6 bg-white rounded-2xl p-3 border border-gray-200 shadow-sm"
+            >
+              <div class="flex items-center flex-grow gap-2 px-3">
+                <i data-lucide="search" class="w-5 h-5 text-gray-400"></i>
+                <input
+                  type="text"
+                  x-model="search"
+                  placeholder="Cari pertanyaan..."
+                  class="w-full bg-transparent outline-none text-sm text-gray-700 placeholder-gray-400"
+                />
+              </div>
+              <button
+                @click="expandAll = !expandAll"
+                class="px-5 py-2.5 bg-primary text-white text-sm font-bold rounded-xl hover:bg-primaryHover transition-colors flex-shrink-0"
+                x-text="expandAll ? 'Collapse All' : 'Expand All'"
+              ></button>
+            </div>
+
+            <!-- FAQ Items -->
+            <div class="space-y-3">
+              <template
+                x-for="(item, index) in [
+                { q: 'Apakah produk dikirim secara fisik?', a: 'Tidak. Semua produk di ZFTStore adalah produk digital dan dikirim melalui email atau instruksi digital setelah pembayaran berhasil.' },
+                { q: 'Apakah transaksi harus melalui WhatsApp?', a: 'Tidak. Seluruh transaksi dilakukan melalui website https://www.zfts.store/, mulai dari memilih produk, checkout, hingga pembayaran. Tidak ada transaksi via WhatsApp.' },
+                { q: 'Kapan produk dikirim setelah pembayaran?', a: 'Produk akan diproses setelah pembayaran berhasil diverifikasi oleh sistem. Detail produk atau instruksi penggunaan akan dikirimkan ke email pelanggan.' },
+                { q: 'Apa yang harus dilakukan jika produk belum diterima?', a: 'Pelanggan dapat menghubungi kontak support resmi kami dengan menyertakan nama, email checkout, nomor pesanan, dan bukti pembayaran.' },
+                { q: 'Apakah bisa refund / pengembalian dana?', a: 'Refund hanya dapat diajukan jika memenuhi ketentuan pada halaman Kebijakan Refund, misalnya produk tidak tersedia, pembayaran ganda, atau pesanan gagal diproses oleh sistem.' },
+                { q: 'Metode pembayaran apa saja yang tersedia?', a: 'Kami menerima pembayaran melalui QRIS, DANA, dan GoPay. Semua pembayaran diproses secara aman melalui payment gateway resmi.' },
+                { q: 'Apakah data saya aman?', a: 'Ya. Kami menjaga keamanan data pelanggan dan tidak menjual data ke pihak lain. Selengkapnya bisa dibaca di halaman Kebijakan Privasi.' }
+              ].filter(i => i.q.toLowerCase().includes(search.toLowerCase()) || i.a.toLowerCase().includes(search.toLowerCase()))"
+                :key="index"
+              >
+                <div
+                  class="bg-white rounded-xl border border-gray-200 overflow-hidden transition-all"
+                  x-data="{ open: false }"
+                  :class="{ 'border-primary/30 shadow-sm': open || expandAll }"
+                >
+                  <button
+                    @click="open = !open"
+                    class="w-full flex items-center justify-between px-6 py-4 text-left"
+                  >
+                    <span
+                      class="font-medium text-gray-900 text-sm pr-4"
+                      x-text="item.q"
+                    ></span>
+                    <i
+                      data-lucide="chevron-down"
+                      class="w-5 h-5 text-gray-400 flex-shrink-0 transition-transform duration-200"
+                      :class="{ 'rotate-180 text-primary': open || expandAll }"
+                    ></i>
+                  </button>
+                  <div x-show="open || expandAll" x-collapse class="px-6 pb-4">
+                    <p
+                      class="text-sm text-gray-600 leading-relaxed"
+                      x-text="item.a"
+                    ></p>
+                  </div>
+                </div>
+              </template>
+            </div>
           </div>
         </div>
       </section>
