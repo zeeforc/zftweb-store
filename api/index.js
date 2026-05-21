@@ -1,21 +1,74 @@
 // Vercel Serverless Function for ZFTStoree
-let createClient;
-try {
-  createClient = require("@libsql/client/web").createClient;
-} catch (e) {
-  // Fallback to main export
-  createClient = require("@libsql/client").createClient;
+// Using Turso HTTP API directly (no native deps needed)
+
+const TURSO_URL = process.env.TURSO_DATABASE_URL || "";
+const TURSO_TOKEN = process.env.TURSO_AUTH_TOKEN || "";
+
+// Convert libsql:// URL to https:// for HTTP API
+function getHttpUrl() {
+  let url = TURSO_URL;
+  if (url.startsWith("libsql://")) {
+    url = url.replace("libsql://", "https://");
+  }
+  return url;
 }
 
-let db;
-function getDb() {
-  if (!db) {
-    db = createClient({
-      url: process.env.TURSO_DATABASE_URL,
-      authToken: process.env.TURSO_AUTH_TOKEN,
-    });
+// Execute SQL via Turso HTTP API
+async function executeSQL(sql, args = []) {
+  const httpUrl = getHttpUrl();
+  const response = await fetch(`${httpUrl}/v2/pipeline`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${TURSO_TOKEN}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      requests: [
+        {
+          type: "execute",
+          stmt: {
+            sql,
+            args: args.map((a) => ({
+              type:
+                a === null
+                  ? "null"
+                  : typeof a === "number"
+                    ? Number.isInteger(a)
+                      ? "integer"
+                      : "float"
+                    : "text",
+              value: a === null ? null : String(a),
+            })),
+          },
+        },
+        { type: "close" },
+      ],
+    }),
+  });
+
+  if (!response.ok) {
+    const text = await response.text();
+    throw new Error(`Turso HTTP error ${response.status}: ${text}`);
   }
-  return db;
+
+  const data = await response.json();
+  const result = data.results[0];
+
+  if (result.type === "error") {
+    throw new Error(result.error.message);
+  }
+
+  // Convert Turso response to rows format
+  const cols = result.response.result.cols.map((c) => c.name);
+  const rows = result.response.result.rows.map((row) => {
+    const obj = {};
+    row.forEach((cell, i) => {
+      obj[cols[i]] = cell.value;
+    });
+    return obj;
+  });
+
+  return { rows };
 }
 
 module.exports = async (req, res) => {
@@ -54,19 +107,19 @@ module.exports = async (req, res) => {
   }
 
   try {
-    const database = getDb();
-
     // GET /api/products
     if (path === "/api/products" && req.method === "GET") {
-      const { rows: products } = await database.execute(
+      const { rows: products } = await executeSQL(
         "SELECT * FROM products ORDER BY created_at DESC",
       );
-      const { rows: variants } = await database.execute(
+      const { rows: variants } = await executeSQL(
         "SELECT * FROM product_variants",
       );
       const result = products.map((p) => ({
         ...p,
-        product_variants: variants.filter((v) => v.product_id === p.id),
+        product_variants: variants.filter(
+          (v) => String(v.product_id) === String(p.id),
+        ),
       }));
       return res.end(JSON.stringify(result));
     }
@@ -85,29 +138,29 @@ module.exports = async (req, res) => {
         res.statusCode = 400;
         return res.end(JSON.stringify({ message: "Nama produk wajib diisi." }));
       }
-      const { rows } = await database.execute({
-        sql: "INSERT INTO products (name, category, thumbnail_url, short_description, long_description, is_active) VALUES (?, ?, ?, ?, ?, 1) RETURNING *",
-        args: [
+      const { rows } = await executeSQL(
+        "INSERT INTO products (name, category, thumbnail_url, short_description, long_description, is_active) VALUES (?, ?, ?, ?, ?, 1) RETURNING *",
+        [
           name,
           category || "Streaming",
           image_url || null,
           short_description || null,
           description || null,
         ],
-      });
+      );
       const newProduct = rows[0];
       if (vars && Array.isArray(vars) && vars.length > 0) {
         for (const v of vars) {
-          await database.execute({
-            sql: "INSERT INTO product_variants (product_id, account_type, duration, cost_price, sell_price, is_active) VALUES (?, ?, ?, ?, ?, 1)",
-            args: [
+          await executeSQL(
+            "INSERT INTO product_variants (product_id, account_type, duration, cost_price, sell_price, is_active) VALUES (?, ?, ?, ?, ?, 1)",
+            [
               newProduct.id,
               v.type,
               v.dur,
               Number(v.cost_price) || 0,
               Number(v.price) || 0,
             ],
-          });
+          );
         }
       }
       res.statusCode = 201;
@@ -132,36 +185,25 @@ module.exports = async (req, res) => {
         image_url,
         variants: vars,
       } = body;
-      await database.execute({
-        sql: "UPDATE products SET name=?, category=?, thumbnail_url=?, short_description=?, long_description=?, updated_at=datetime('now') WHERE id=?",
-        args: [name, category, image_url, short_description, description, id],
-      });
+      await executeSQL(
+        "UPDATE products SET name=?, category=?, thumbnail_url=?, short_description=?, long_description=?, updated_at=datetime('now') WHERE id=?",
+        [name, category, image_url, short_description, description, id],
+      );
       if (vars && Array.isArray(vars)) {
-        const incomingIds = vars.filter((v) => v.id).map((v) => v.id);
-        if (incomingIds.length > 0) {
-          const ph = incomingIds.map(() => "?").join(",");
-          await database.execute({
-            sql: `DELETE FROM product_variants WHERE product_id=? AND id NOT IN (${ph})`,
-            args: [id, ...incomingIds],
-          });
-        } else {
-          await database.execute({
-            sql: "DELETE FROM product_variants WHERE product_id=?",
-            args: [id],
-          });
-        }
+        await executeSQL("DELETE FROM product_variants WHERE product_id=?", [
+          id,
+        ]);
         for (const v of vars) {
-          if (v.id) {
-            await database.execute({
-              sql: "UPDATE product_variants SET account_type=?, duration=?, cost_price=?, sell_price=? WHERE id=?",
-              args: [v.type, v.dur, v.cost_price, v.price, v.id],
-            });
-          } else {
-            await database.execute({
-              sql: "INSERT INTO product_variants (product_id, account_type, duration, cost_price, sell_price, is_active) VALUES (?,?,?,?,?,1)",
-              args: [id, v.type, v.dur, v.cost_price, v.price],
-            });
-          }
+          await executeSQL(
+            "INSERT INTO product_variants (product_id, account_type, duration, cost_price, sell_price, is_active) VALUES (?,?,?,?,?,1)",
+            [
+              id,
+              v.type,
+              v.dur,
+              Number(v.cost_price) || 0,
+              Number(v.price) || 0,
+            ],
+          );
         }
       }
       return res.end(
@@ -173,14 +215,8 @@ module.exports = async (req, res) => {
     const delMatch = path.match(/^\/api\/admin\/products\/(\d+)$/);
     if (delMatch && req.method === "DELETE") {
       const id = delMatch[1];
-      const { rows } = await database.execute({
-        sql: "DELETE FROM products WHERE id=? RETURNING *",
-        args: [id],
-      });
-      if (!rows || rows.length === 0) {
-        res.statusCode = 404;
-        return res.end(JSON.stringify({ message: "Produk tidak ditemukan." }));
-      }
+      await executeSQL("DELETE FROM product_variants WHERE product_id=?", [id]);
+      await executeSQL("DELETE FROM products WHERE id=?", [id]);
       return res.end(
         JSON.stringify({ status: "success", message: "Produk dihapus." }),
       );
@@ -188,7 +224,7 @@ module.exports = async (req, res) => {
 
     // GET /api/admin/inventory
     if (path === "/api/admin/inventory" && req.method === "GET") {
-      const { rows } = await database.execute(
+      const { rows } = await executeSQL(
         "SELECT i.*, pv.account_type, pv.duration, p.name as product_name FROM inventory i LEFT JOIN product_variants pv ON i.variant_id=pv.id LEFT JOIN products p ON pv.product_id=p.id ORDER BY i.created_at DESC",
       );
       const result = rows.map((r) => ({
@@ -224,29 +260,38 @@ module.exports = async (req, res) => {
         .filter((l) => l !== "");
       for (const accLine of accountList) {
         const parts = accLine.split("|");
-        await database.execute({
-          sql: "INSERT INTO inventory (variant_id, email, password, profile_name, pin, status) VALUES (?,?,?,?,?,'available')",
-          args: [
+        await executeSQL(
+          "INSERT INTO inventory (variant_id, email, password, profile_name, pin, status) VALUES (?,?,?,?,?,'available')",
+          [
             variant_id,
             parts[0] || "",
             parts[1] || "",
             parts[2] || null,
             parts[3] || null,
           ],
-        });
+        );
       }
-      const { rows } = await database.execute({
-        sql: "SELECT stock_count FROM product_variants WHERE id=?",
-        args: [variant_id],
-      });
-      const newCount = (rows[0]?.stock_count || 0) + accountList.length;
-      let sql = "UPDATE product_variants SET stock_count=?";
-      const args = [newCount];
-      if (status_web === "ready") sql += ", is_active=1";
-      if (status_web === "hidden") sql += ", is_active=0";
-      sql += " WHERE id=?";
-      args.push(variant_id);
-      await database.execute({ sql, args });
+      const { rows } = await executeSQL(
+        "SELECT stock_count FROM product_variants WHERE id=?",
+        [variant_id],
+      );
+      const newCount = (Number(rows[0]?.stock_count) || 0) + accountList.length;
+      if (status_web === "ready") {
+        await executeSQL(
+          "UPDATE product_variants SET stock_count=?, is_active=1 WHERE id=?",
+          [newCount, variant_id],
+        );
+      } else if (status_web === "hidden") {
+        await executeSQL(
+          "UPDATE product_variants SET stock_count=?, is_active=0 WHERE id=?",
+          [newCount, variant_id],
+        );
+      } else {
+        await executeSQL(
+          "UPDATE product_variants SET stock_count=? WHERE id=?",
+          [newCount, variant_id],
+        );
+      }
       res.statusCode = 201;
       return res.end(
         JSON.stringify({
@@ -261,10 +306,10 @@ module.exports = async (req, res) => {
     if (patchMatch && req.method === "PATCH") {
       const id = patchMatch[1];
       const { is_active } = body;
-      await database.execute({
-        sql: "UPDATE product_variants SET is_active=? WHERE id=?",
-        args: [is_active ? 1 : 0, id],
-      });
+      await executeSQL("UPDATE product_variants SET is_active=? WHERE id=?", [
+        is_active ? 1 : 0,
+        id,
+      ]);
       return res.end(
         JSON.stringify({ status: "success", message: "Status diupdate." }),
       );
@@ -288,10 +333,10 @@ module.exports = async (req, res) => {
         Date.now() +
         "-" +
         Math.random().toString(36).substring(2, 7).toUpperCase();
-      const { rows } = await database.execute({
-        sql: "INSERT INTO orders (user_email, variant_id, total_price, voucher_id, status) VALUES (?,?,?,?,'pending') RETURNING *",
-        args: [user_email, items[0].variant_id, totalPrice, merchantRef],
-      });
+      const { rows } = await executeSQL(
+        "INSERT INTO orders (user_email, variant_id, total_price, voucher_id, status) VALUES (?,?,?,?,'pending') RETURNING *",
+        [user_email, items[0].variant_id, totalPrice, merchantRef],
+      );
       return res.end(
         JSON.stringify({
           status: "success",
@@ -317,10 +362,10 @@ module.exports = async (req, res) => {
         res.statusCode = 400;
         return res.end(JSON.stringify({ message: "merchant_ref diperlukan." }));
       }
-      const { rows } = await database.execute({
-        sql: "SELECT o.*, di.account_details, di.delivered_at, pv.account_type, pv.duration, p.name as product_name, p.thumbnail_url FROM orders o LEFT JOIN delivered_items di ON o.id=di.order_id LEFT JOIN product_variants pv ON o.variant_id=pv.id LEFT JOIN products p ON pv.product_id=p.id WHERE o.voucher_id=? ORDER BY o.total_price DESC",
-        args: [merchant_ref],
-      });
+      const { rows } = await executeSQL(
+        "SELECT o.*, di.account_details, di.delivered_at, pv.account_type, pv.duration, p.name as product_name, p.thumbnail_url FROM orders o LEFT JOIN delivered_items di ON o.id=di.order_id LEFT JOIN product_variants pv ON o.variant_id=pv.id LEFT JOIN products p ON pv.product_id=p.id WHERE o.voucher_id=? ORDER BY o.total_price DESC",
+        [merchant_ref],
+      );
       if (!rows || rows.length === 0) {
         res.statusCode = 404;
         return res.end(JSON.stringify({ message: "Order tidak ditemukan." }));
@@ -341,10 +386,10 @@ module.exports = async (req, res) => {
         res.statusCode = 400;
         return res.end(JSON.stringify({ message: "Email diperlukan." }));
       }
-      const { rows } = await database.execute({
-        sql: "SELECT o.id, o.total_price, o.created_at, o.voucher_id as merchant_ref, di.account_details, di.delivered_at, pv.account_type, pv.duration, p.name as product_name, p.thumbnail_url FROM orders o LEFT JOIN delivered_items di ON o.id=di.order_id LEFT JOIN product_variants pv ON o.variant_id=pv.id LEFT JOIN products p ON pv.product_id=p.id WHERE o.user_email=? AND o.status='paid' AND o.total_price > 0 ORDER BY o.created_at DESC",
-        args: [email],
-      });
+      const { rows } = await executeSQL(
+        "SELECT o.id, o.total_price, o.created_at, o.voucher_id as merchant_ref, di.account_details, di.delivered_at, pv.account_type, pv.duration, p.name as product_name, p.thumbnail_url FROM orders o LEFT JOIN delivered_items di ON o.id=di.order_id LEFT JOIN product_variants pv ON o.variant_id=pv.id LEFT JOIN products p ON pv.product_id=p.id WHERE o.user_email=? AND o.status='paid' AND o.total_price > 0 ORDER BY o.created_at DESC",
+        [email],
+      );
       const result = rows.map((r) => ({
         id: r.id,
         merchant_ref: r.merchant_ref,
@@ -378,24 +423,23 @@ module.exports = async (req, res) => {
       }
       const { merchant_ref, status } = body;
       if (status === "PAID") {
-        await database.execute({
-          sql: "UPDATE orders SET status='paid' WHERE voucher_id=?",
-          args: [merchant_ref],
-        });
-        const { rows: orders } = await database.execute({
-          sql: "SELECT * FROM orders WHERE voucher_id=?",
-          args: [merchant_ref],
-        });
+        await executeSQL("UPDATE orders SET status='paid' WHERE voucher_id=?", [
+          merchant_ref,
+        ]);
+        const { rows: orders } = await executeSQL(
+          "SELECT * FROM orders WHERE voucher_id=?",
+          [merchant_ref],
+        );
         for (const order of orders) {
-          const { rows: stock } = await database.execute({
-            sql: "SELECT * FROM inventory WHERE variant_id=? AND status='available' LIMIT 1",
-            args: [order.variant_id],
-          });
+          const { rows: stock } = await executeSQL(
+            "SELECT * FROM inventory WHERE variant_id=? AND status='available' LIMIT 1",
+            [order.variant_id],
+          );
           if (stock && stock.length > 0) {
             const s = stock[0];
-            await database.execute({
-              sql: "INSERT INTO delivered_items (order_id, account_details) VALUES (?,?)",
-              args: [
+            await executeSQL(
+              "INSERT INTO delivered_items (order_id, account_details) VALUES (?,?)",
+              [
                 order.id,
                 JSON.stringify({
                   email: s.email,
@@ -404,22 +448,21 @@ module.exports = async (req, res) => {
                   pin: s.pin,
                 }),
               ],
-            });
-            await database.execute({
-              sql: "UPDATE inventory SET status='sold' WHERE id=?",
-              args: [s.id],
-            });
-            await database.execute({
-              sql: "UPDATE product_variants SET stock_count=stock_count-1 WHERE id=? AND stock_count>0",
-              args: [order.variant_id],
-            });
+            );
+            await executeSQL("UPDATE inventory SET status='sold' WHERE id=?", [
+              s.id,
+            ]);
+            await executeSQL(
+              "UPDATE product_variants SET stock_count=stock_count-1 WHERE id=? AND stock_count>0",
+              [order.variant_id],
+            );
           }
         }
       } else if (status === "EXPIRED" || status === "FAILED") {
-        await database.execute({
-          sql: "UPDATE orders SET status=? WHERE voucher_id=?",
-          args: [status.toLowerCase(), merchant_ref],
-        });
+        await executeSQL("UPDATE orders SET status=? WHERE voucher_id=?", [
+          status.toLowerCase(),
+          merchant_ref,
+        ]);
       }
       return res.end(JSON.stringify({ success: true }));
     }
