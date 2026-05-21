@@ -45,10 +45,8 @@ const ProductController = {
     } = req.body;
 
     try {
-      if (!name || !image_url) {
-        return reply
-          .code(400)
-          .send({ message: "Nama dan URL Thumbnail wajib diisi." });
+      if (!name) {
+        return reply.code(400).send({ message: "Nama produk wajib diisi." });
       }
 
       // Insert produk

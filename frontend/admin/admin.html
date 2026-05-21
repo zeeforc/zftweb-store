@@ -1484,8 +1484,8 @@
           class="px-8 py-6 border-t border-gray-100 bg-white flex-shrink-0 z-10"
         >
           <button
-            type="submit"
-            form="addProductForm"
+            type="button"
+            @click="submitProduct()"
             class="w-full bg-accent hover:bg-accentHover text-white py-4 rounded-2xl font-bold shadow-btn transition-all text-lg"
             x-text="isEditMode ? 'Simpan Perubahan' : 'Simpan Produk ke Database'"
           ></button>
