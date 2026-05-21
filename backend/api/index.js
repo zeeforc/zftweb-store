@@ -3,7 +3,7 @@ try {
   require("dotenv").config();
 } catch (e) {}
 
-const { createClient } = require("@libsql/client");
+const { createClient } = require("@libsql/client/web");
 
 let db;
 function getDb() {
