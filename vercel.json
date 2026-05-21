@@ -13,12 +13,28 @@
   ],
   "routes": [
     {
-      "src": "/api/(.*)",
-      "dest": "backend/api/index.js"
+      "src": "/api(.*)",
+      "dest": "/backend/api/index.js"
     },
     {
-      "src": "/(.*)",
-      "dest": "frontend/$1"
+      "src": "/(.*\\.(html|js|css|png|jpg|svg|ico|webp))",
+      "dest": "/frontend/$1"
+    },
+    {
+      "src": "/admin/(.*)",
+      "dest": "/frontend/admin/$1"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/frontend/assets/$1"
+    },
+    {
+      "src": "/components/(.*)",
+      "dest": "/frontend/components/$1"
+    },
+    {
+      "src": "/",
+      "dest": "/frontend/index.html"
     }
   ]
 }
