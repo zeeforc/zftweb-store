@@ -1,0 +1,8 @@
+{
+  "name": "zftweb-store",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@libsql/client": "^0.15.0"
+  }
+}

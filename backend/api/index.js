@@ -1,8 +1,4 @@
-// Vercel Serverless Function - Pure handler tanpa Fastify overhead
-try {
-  require("dotenv").config();
-} catch (e) {}
-
+// Vercel Serverless Function
 const { createClient } = require("@libsql/client/web");
 
 let db;

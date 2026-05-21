@@ -4,5 +4,3 @@ backend/data/
 backend/.env
 .env
 *.db
-package-lock.json
-backend/package-lock.json
