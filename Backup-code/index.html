@@ -1,0 +1,1532 @@
+<!doctype html>
+<html lang="id" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AppStoreHub | Aplikasi Premium</title>
+
+    <link
+      href="https://api.fontshare.com/v2/css?f[]=general-sans@300,400,500,600,700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ["General Sans", "sans-serif"],
+            },
+            colors: {
+              primary: "#4F46E5",
+              primaryHover: "#4338CA",
+              surface: "#F9FAFB",
+            },
+            boxShadow: {
+              soft: "0 4px 20px -2px rgba(0, 0, 0, 0.05)",
+              hover: "0 10px 25px -5px rgba(0, 0, 0, 0.08)",
+            },
+            animation: {
+              "float-slow": "float 6s ease-in-out infinite",
+              "float-med": "float 5s ease-in-out infinite",
+              "float-fast": "float 4s ease-in-out infinite",
+              "modal-enter":
+                "modalEnter 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards",
+            },
+            keyframes: {
+              float: {
+                "0%, 100%": { transform: "translateY(0)" },
+                "50%": { transform: "translateY(-15px)" },
+              },
+              modalEnter: {
+                "0%": { opacity: "0", transform: "scale(0.95)" },
+                "100%": { opacity: "1", transform: "scale(1)" },
+              },
+            },
+          },
+        },
+      };
+    </script>
+
+    <script
+      src="https://cdn.jsdelivr.net/npm/alpinejs@3.13.3/dist/cdn.min.js"
+      defer
+    ></script>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <style>
+      [x-cloak] {
+        display: none !important;
+      }
+      body {
+        background-color: #ffffff;
+        color: #111827;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      body.modal-open {
+        overflow: hidden;
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f3f4f6;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #d1d5db;
+        border-radius: 4px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #9ca3af;
+      }
+
+      /* Custom Scrollbar for Modal Inner */
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #e5e7eb;
+        border-radius: 4px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+        background: #d1d5db;
+      }
+
+      /* Component Classes */
+      .ecommerce-card {
+        background: #ffffff;
+        border: 1px solid #f3f4f6;
+        border-radius: 1.5rem;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
+      .ecommerce-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.08);
+        border-color: #e5e7eb;
+      }
+
+      .btn-primary {
+        background-color: #4f46e5;
+        color: #ffffff;
+        transition: all 0.2s ease-in-out;
+      }
+
+      .btn-primary:hover {
+        background-color: #4338ca;
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3);
+      }
+
+      .btn-outline {
+        background-color: #ffffff;
+        color: #374151;
+        border: 1px solid #e5e7eb;
+        transition: all 0.2s ease-in-out;
+      }
+
+      .btn-outline:hover {
+        border-color: #d1d5db;
+        background-color: #f9fafb;
+        color: #111827;
+      }
+
+      /* Scroll Reveal Animation */
+      .reveal {
+        opacity: 0;
+        transform: translateY(30px);
+        transition:
+          opacity 0.7s ease-out,
+          transform 0.7s ease-out;
+      }
+
+      .reveal.active {
+        opacity: 1;
+        transform: translateY(0);
+      }
+
+      /* Gradient Text */
+      .text-gradient {
+        background: linear-gradient(135deg, #111827 0%, #4f46e5 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+    </style>
+  </head>
+  <body class="selection:bg-primary selection:text-white" x-data="homeApp()">
+    <div id="navbar-container"></div>
+
+    <div id="home-view" class="block">
+      <section
+        class="relative pt-32 pb-20 lg:pt-40 lg:pb-28 overflow-hidden bg-gradient-to-br from-white via-indigo-50/30 to-white"
+      >
+        <div
+          class="absolute top-0 right-0 -translate-y-12 translate-x-1/3 w-[600px] h-[600px] bg-primary/5 rounded-full blur-3xl pointer-events-none"
+        ></div>
+
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div class="reveal">
+              <div
+                class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary/10 text-primary text-sm font-semibold mb-6"
+              >
+                <span class="relative flex h-2 w-2">
+                  <span
+                    class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"
+                  ></span>
+                  <span
+                    class="relative inline-flex rounded-full h-2 w-2 bg-primary"
+                  ></span>
+                </span>
+                Pengiriman Instan Tersedia
+              </div>
+
+              <h1
+                class="text-4xl md:text-5xl lg:text-[56px] font-bold text-gray-900 leading-[1.1] mb-6 tracking-tight"
+              >
+                Aplikasi Premium <br />
+                <span class="text-gradient">Tanpa Harga Premium</span>
+              </h1>
+
+              <p class="text-lg text-gray-600 mb-8 max-w-lg leading-relaxed">
+                Buka akses Netflix, Canva Pro, CapCut Pro, Spotify Premium dan
+                banyak lagi — dikirim instan setelah pembayaran. Aman,
+                terpercaya, dan terjangkau.
+              </p>
+
+              <div class="flex flex-wrap items-center gap-4">
+                <a
+                  href="#apps"
+                  class="btn-primary px-8 py-3.5 rounded-full font-medium text-base flex items-center gap-2"
+                >
+                  Lihat Aplikasi
+                  <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+                <a
+                  href="#pricing"
+                  class="btn-outline px-8 py-3.5 rounded-full font-medium text-base"
+                >
+                  Cek Daftar Harga
+                </a>
+              </div>
+
+              <div class="mt-10 flex items-center gap-4 text-sm text-gray-500">
+                <div class="flex -space-x-2">
+                  <img
+                    class="w-8 h-8 rounded-full border-2 border-white"
+                    src="https://i.pravatar.cc/100?img=1"
+                    alt="Pengguna"
+                  />
+                  <img
+                    class="w-8 h-8 rounded-full border-2 border-white"
+                    src="https://i.pravatar.cc/100?img=2"
+                    alt="Pengguna"
+                  />
+                  <img
+                    class="w-8 h-8 rounded-full border-2 border-white"
+                    src="https://i.pravatar.cc/100?img=3"
+                    alt="Pengguna"
+                  />
+                </div>
+                <p>
+                  Telah dipercaya oleh
+                  <span class="font-semibold text-gray-900">10,000+</span>
+                  pelanggan setia
+                </p>
+              </div>
+            </div>
+
+            <div
+              class="relative h-[400px] lg:h-[500px] w-full hidden md:block reveal"
+              style="transition-delay: 200ms"
+            >
+              <div
+                class="absolute top-[10%] left-[15%] w-24 h-24 bg-white/80 backdrop-blur-xl rounded-[1.75rem] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] flex items-center justify-center border border-white/60 animate-float-slow z-20"
+              >
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/75/Netflix_icon.svg/960px-Netflix_icon.svg.png"
+                  alt="Netflix"
+                  class="w-16 h-16 rounded-[14px] object-cover shadow-sm"
+                />
+              </div>
+              <div
+                class="absolute top-[35%] right-[10%] w-28 h-28 bg-white/80 backdrop-blur-xl rounded-[2rem] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] flex items-center justify-center border border-white/60 animate-float-med z-10"
+                style="animation-delay: 1s"
+              >
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/8/84/Spotify_icon.svg/1280px-Spotify_icon.svg.png"
+                  alt="Spotify"
+                  class="w-[72px] h-[72px] rounded-[16px] object-cover shadow-sm"
+                />
+              </div>
+              <div
+                class="absolute bottom-[15%] left-[20%] w-20 h-20 bg-white/80 backdrop-blur-xl rounded-[1.5rem] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] flex items-center justify-center border border-white/60 animate-float-fast z-30"
+                style="animation-delay: 2s"
+              >
+                <img
+                  src="https://cdn-1.webcatalog.io/catalog/canva-cn/canva-cn-icon-filled-256.webp"
+                  alt="Canva"
+                  class="w-12 h-12 rounded-[10px] object-cover shadow-sm"
+                />
+              </div>
+              <div
+                class="absolute top-[55%] right-[35%] w-20 h-20 bg-white/80 backdrop-blur-xl rounded-[1.5rem] shadow-[0_10px_40px_-10px_rgba(0,0,0,0.15)] flex items-center justify-center border border-white/60 animate-float-slow z-20"
+                style="animation-delay: 1.5s"
+              >
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/thumb/e/ef/ChatGPT-Logo.svg/1280px-ChatGPT-Logo.svg.png"
+                  alt="ChatGPT"
+                  class="w-12 h-12 rounded-[10px] object-cover shadow-sm"
+                />
+              </div>
+              <div
+                class="absolute top-[5%] right-[40%] w-16 h-16 bg-white/80 backdrop-blur-xl rounded-[1.25rem] shadow-[0_10px_30px_-10px_rgba(0,0,0,0.1)] flex items-center justify-center border border-white/60 animate-float-med z-10"
+                style="animation-delay: 0.5s"
+              >
+                <img
+                  src="https://upload.wikimedia.org/wikipedia/commons/0/0c/Capcut-icon.png"
+                  alt="CapCut"
+                  class="w-10 h-10 rounded-[8px] object-cover shadow-sm"
+                />
+              </div>
+              <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-primary/5 rounded-full border border-primary/10"
+              ></div>
+              <div
+                class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-primary/10 rounded-full border border-primary/20"
+              ></div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section id="categories" class="py-20 bg-surface">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div
+            class="flex flex-col md:flex-row md:items-end justify-between mb-12 reveal"
+          >
+            <div>
+              <h2 class="text-3xl font-bold text-gray-900 mb-2">
+                Pencarian per Kategori
+              </h2>
+              <p class="text-gray-500">
+                Temukan aplikasi sesuai dengan kebutuhan kerja atau hiburanmu.
+              </p>
+            </div>
+            <button
+              onclick="showAllCategories()"
+              id="btn-lihat-semua-kategori"
+              class="hidden md:flex items-center gap-1 text-primary font-medium hover:text-primaryHover transition-colors mt-4 md:mt-0"
+            >
+              Lihat semua kategori
+              <i data-lucide="arrow-right" class="w-4 h-4"></i>
+            </button>
+          </div>
+
+          <div
+            class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6"
+            id="kategori-grid"
+          >
+            <a
+              href="#"
+              class="ecommerce-card p-6 flex items-start gap-5 reveal group"
+            >
+              <div
+                class="w-14 h-14 rounded-2xl bg-gradient-to-br from-rose-50 to-rose-100/60 border border-rose-200 text-rose-600 flex items-center justify-center flex-shrink-0 shadow-sm shadow-rose-100 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"
+              >
+                <i data-lucide="tv" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <h3
+                  class="font-bold text-gray-900 mb-1 group-hover:text-primary transition-colors"
+                >
+                  Streaming
+                </h3>
+                <p class="text-sm text-gray-500 leading-relaxed">
+                  Film, series, dan hiburan premium
+                </p>
+              </div>
+            </a>
+            <a
+              href="#"
+              class="ecommerce-card p-6 flex items-start gap-5 reveal group"
+              style="transition-delay: 100ms"
+            >
+              <div
+                class="w-14 h-14 rounded-2xl bg-gradient-to-br from-purple-50 to-purple-100/60 border border-purple-200 text-purple-600 flex items-center justify-center flex-shrink-0 shadow-sm shadow-purple-100 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"
+              >
+                <i data-lucide="pen-tool" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <h3
+                  class="font-bold text-gray-900 mb-1 group-hover:text-primary transition-colors"
+                >
+                  Alat Desain
+                </h3>
+                <p class="text-sm text-gray-500 leading-relaxed">
+                  Software desain grafis dan presentasi
+                </p>
+              </div>
+            </a>
+            <a
+              href="#"
+              class="ecommerce-card p-6 flex items-start gap-5 reveal group"
+              style="transition-delay: 200ms"
+            >
+              <div
+                class="w-14 h-14 rounded-2xl bg-gradient-to-br from-emerald-50 to-emerald-100/60 border border-emerald-200 text-emerald-600 flex items-center justify-center flex-shrink-0 shadow-sm shadow-emerald-100 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300"
+              >
+                <i data-lucide="cpu" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <h3
+                  class="font-bold text-gray-900 mb-1 group-hover:text-primary transition-colors"
+                >
+                  Alat AI
+                </h3>
+                <p class="text-sm text-gray-500 leading-relaxed">
+                  Kecerdasan buatan & asisten pintar
+                </p>
+              </div>
+            </a>
+            <a
+              href="#"
+              class="ecommerce-card p-6 flex items-start gap-5 reveal group"
+              style="transition-delay: 300ms"
+            >
+              <div
+                class="w-14 h-14 rounded-2xl bg-gradient-to-br from-teal-50 to-teal-100/60 border border-teal-200 text-teal-600 flex items-center justify-center flex-shrink-0 shadow-sm shadow-teal-100 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"
+              >
+                <i data-lucide="headphones" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <h3
+                  class="font-bold text-gray-900 mb-1 group-hover:text-primary transition-colors"
+                >
+                  Musik
+                </h3>
+                <p class="text-sm text-gray-500 leading-relaxed">
+                  Streaming audio bebas iklan
+                </p>
+              </div>
+            </a>
+            <a
+              href="#"
+              class="ecommerce-card p-6 flex items-start gap-5 reveal group"
+              style="transition-delay: 400ms"
+            >
+              <div
+                class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-50 to-blue-100/60 border border-blue-200 text-blue-600 flex items-center justify-center flex-shrink-0 shadow-sm shadow-blue-100 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300"
+              >
+                <i data-lucide="briefcase" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <h3
+                  class="font-bold text-gray-900 mb-1 group-hover:text-primary transition-colors"
+                >
+                  Produktivitas
+                </h3>
+                <p class="text-sm text-gray-500 leading-relaxed">
+                  Aplikasi kerja dan manajemen proyek
+                </p>
+              </div>
+            </a>
+            <a
+              href="#"
+              class="ecommerce-card p-6 flex items-start gap-5 reveal group"
+              style="transition-delay: 500ms"
+            >
+              <div
+                class="w-14 h-14 rounded-2xl bg-gradient-to-br from-amber-50 to-amber-100/60 border border-amber-200 text-amber-600 flex items-center justify-center flex-shrink-0 shadow-sm shadow-amber-100 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"
+              >
+                <i data-lucide="video" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <h3
+                  class="font-bold text-gray-900 mb-1 group-hover:text-primary transition-colors"
+                >
+                  Edit Video
+                </h3>
+                <p class="text-sm text-gray-500 leading-relaxed">
+                  Software video editing profesional
+                </p>
+              </div>
+            </a>
+
+            <a
+              href="#"
+              class="ecommerce-card p-6 flex items-start gap-5 hidden extra-kategori group"
+            >
+              <div
+                class="w-14 h-14 rounded-2xl bg-gradient-to-br from-pink-50 to-pink-100/60 border border-pink-200 text-pink-600 flex items-center justify-center flex-shrink-0 shadow-sm shadow-pink-100 group-hover:scale-110 group-hover:-rotate-3 transition-all duration-300"
+              >
+                <i data-lucide="gamepad-2" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <h3
+                  class="font-bold text-gray-900 mb-1 group-hover:text-primary transition-colors"
+                >
+                  Gaming
+                </h3>
+                <p class="text-sm text-gray-500 leading-relaxed">
+                  Langganan cloud gaming dan item
+                </p>
+              </div>
+            </a>
+            <a
+              href="#"
+              class="ecommerce-card p-6 flex items-start gap-5 hidden extra-kategori group"
+            >
+              <div
+                class="w-14 h-14 rounded-2xl bg-gradient-to-br from-indigo-50 to-indigo-100/60 border border-indigo-200 text-indigo-600 flex items-center justify-center flex-shrink-0 shadow-sm shadow-indigo-100 group-hover:scale-110 group-hover:rotate-3 transition-all duration-300"
+              >
+                <i data-lucide="cloud" class="w-6 h-6"></i>
+              </div>
+              <div>
+                <h3
+                  class="font-bold text-gray-900 mb-1 group-hover:text-primary transition-colors"
+                >
+                  Penyimpanan
+                </h3>
+                <p class="text-sm text-gray-500 leading-relaxed">
+                  Penyimpanan awan & drive premium
+                </p>
+              </div>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <section class="py-20 bg-white border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-14 reveal active">
+            <h2 class="text-3xl font-bold text-gray-900 mb-3">
+              Paling Populer Saat Ini
+            </h2>
+            <p class="text-gray-500 max-w-2xl mx-auto">
+              Langganan terlaris kami yang diperbarui setiap hari.
+            </p>
+          </div>
+
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6"
+            x-cloak
+          >
+            <template x-for="item in popularProducts" :key="item.id">
+              <div
+                @click="openModal(item.id)"
+                class="ecommerce-card p-6 flex flex-col h-full reveal active relative overflow-hidden group cursor-pointer"
+              >
+                <div
+                  class="absolute top-4 right-4 bg-orange-100 text-orange-600 text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider"
+                >
+                  Laris
+                </div>
+
+                <div
+                  class="w-16 h-16 rounded-2xl bg-surface flex items-center justify-center border border-gray-100 overflow-hidden mb-6"
+                >
+                  <img
+                    :src="item.thumbnail_url"
+                    class="w-full h-full object-cover"
+                    onerror="this.style.display = 'none'"
+                  />
+                  <span
+                    x-show="!item.thumbnail_url"
+                    x-text="item.name.charAt(0)"
+                    class="text-primary text-2xl font-bold"
+                  ></span>
+                </div>
+
+                <h3
+                  class="text-xl font-bold text-gray-900 mb-2"
+                  x-text="item.name"
+                ></h3>
+                <p
+                  class="text-sm text-gray-500 mb-6 flex-grow"
+                  x-text="item.short_description"
+                ></p>
+
+                <div
+                  class="pt-4 border-t border-gray-100 flex items-end justify-between mt-auto"
+                >
+                  <div>
+                    <span class="block text-xs text-gray-400 mb-0.5"
+                      >Mulai dari •
+                      <span
+                        class="font-medium text-primary"
+                        x-text="'Terjual ' + item.dummySold"
+                      ></span
+                    ></span>
+                    <span
+                      class="text-lg font-bold text-gray-900"
+                      x-text="formatRupiah(item.minPrice)"
+                    ></span
+                    ><span class="text-sm font-normal text-gray-500">/bln</span>
+                  </div>
+                  <button
+                    @click.stop="addToCart(event, item.id)"
+                    class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center hover:bg-primary hover:text-white transition-colors"
+                  >
+                    <i data-lucide="plus" class="w-5 h-5"></i>
+                  </button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+      </section>
+
+      <section id="pricing" class="py-20 bg-surface border-t border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div
+            class="flex flex-col sm:flex-row justify-between items-center mb-10 reveal active"
+          >
+            <h2 class="text-2xl font-bold text-gray-900">
+              Semua Aplikasi Tersedia
+            </h2>
+            <div class="flex gap-2 mt-4 sm:mt-0 bg-gray-100 p-1 rounded-lg">
+              <button
+                class="px-4 py-1.5 text-sm font-medium bg-white text-gray-900 rounded-md shadow-sm"
+              >
+                Bulanan
+              </button>
+              <button
+                class="px-4 py-1.5 text-sm font-medium text-gray-500 hover:text-gray-900 rounded-md"
+              >
+                Tahunan
+              </button>
+            </div>
+          </div>
+
+          <div
+            class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"
+            id="semua-aplikasi-grid"
+            x-cloak
+          >
+            <template x-for="item in allProducts" :key="item.id">
+              <div
+                @click="openModal(item.id)"
+                class="ecommerce-card flex flex-col h-full reveal active group overflow-hidden block cursor-pointer"
+                :data-title="item.name.toLowerCase()"
+              >
+                <div
+                  class="h-48 bg-gray-50 flex items-center justify-center relative overflow-hidden border-b border-gray-100"
+                >
+                  <div
+                    class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent"
+                  ></div>
+                  <div
+                    class="w-20 h-20 rounded-2xl bg-white flex items-center justify-center shadow-lg transform group-hover:scale-110 transition-transform duration-300 relative z-10 overflow-hidden"
+                  >
+                    <img
+                      :src="item.thumbnail_url"
+                      class="w-full h-full object-cover"
+                      onerror="this.style.display = 'none'"
+                    />
+                    <span
+                      x-show="!item.thumbnail_url"
+                      x-text="item.name.charAt(0)"
+                      class="text-primary text-3xl font-bold"
+                    ></span>
+                  </div>
+                </div>
+
+                <div class="p-6 flex flex-col flex-grow">
+                  <div class="flex justify-between items-start mb-2">
+                    <h3
+                      class="text-lg font-bold text-gray-900 group-hover:text-primary transition-colors"
+                      x-text="item.name"
+                    ></h3>
+                    <div
+                      class="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded text-xs font-medium text-yellow-700"
+                    >
+                      <i
+                        data-lucide="star"
+                        class="w-3 h-3 fill-yellow-400 text-yellow-400"
+                      ></i>
+                      4.5
+                    </div>
+                  </div>
+                  <p
+                    class="text-sm text-gray-500 mb-6 flex-grow"
+                    x-text="item.short_description"
+                  ></p>
+
+                  <div
+                    class="flex items-end justify-between mt-auto pt-4 border-t border-gray-100"
+                  >
+                    <div>
+                      <span class="block text-xs text-gray-400 mb-0.5"
+                        >Harga •
+                        <span
+                          class="font-medium text-primary"
+                          x-text="'Terjual ' + item.dummySold"
+                        ></span
+                      ></span>
+                      <span
+                        class="text-lg font-bold text-gray-900"
+                        x-text="formatRupiah(item.minPrice)"
+                      ></span
+                      ><span class="text-xs text-gray-500 font-normal"
+                        >/bln</span
+                      >
+                    </div>
+                    <div class="flex gap-2">
+                      <button
+                        @click.stop="addToCart($event, item.id)"
+                        class="w-10 h-10 rounded-full bg-gray-100 text-gray-600 flex items-center justify-center hover:bg-gray-200 transition-colors"
+                      >
+                        <i data-lucide="shopping-cart" class="w-4 h-4"></i>
+                      </button>
+                      <span
+                        class="w-10 h-10 rounded-full bg-primary/10 text-primary flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors"
+                      >
+                        <i data-lucide="arrow-right" class="w-5 h-5"></i>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </template>
+          </div>
+          <div class="text-center mt-12 reveal" id="load-more-container">
+            <button
+              onclick="loadMoreApps()"
+              class="text-primary font-medium hover:text-primaryHover inline-flex items-center gap-2"
+            >
+              Muat lebih banyak
+              <i data-lucide="chevron-down" class="w-4 h-4"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <section class="py-24 bg-white relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16 reveal">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">Cara Kerja</h2>
+            <p class="text-gray-500 max-w-2xl mx-auto">
+              Dapatkan aplikasi premium Anda dalam tiga langkah mudah.
+            </p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-10 relative">
+            <div
+              class="hidden md:block absolute top-10 left-[15%] right-[15%] h-[2px] bg-gradient-to-r from-transparent via-gray-200 to-transparent z-0"
+            ></div>
+            <div
+              class="relative z-10 flex flex-col items-center text-center reveal"
+            >
+              <div
+                class="w-20 h-20 rounded-full bg-indigo-50 flex items-center justify-center mb-6 shadow-[0_0_0_8px_rgba(255,255,255,1)]"
+              >
+                <i
+                  data-lucide="mouse-pointer-click"
+                  class="w-8 h-8 text-primary"
+                ></i>
+              </div>
+              <div
+                class="bg-gray-100 text-gray-500 text-xs font-bold px-2.5 py-1 rounded-full mb-3"
+              >
+                LANGKAH 1
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-2">
+                Pilih Aplikasi
+              </h3>
+              <p class="text-gray-500 text-sm">
+                Jelajahi katalog kami dan pilih aplikasi serta durasi
+                berlangganan yang Anda inginkan.
+              </p>
+            </div>
+            <div
+              class="relative z-10 flex flex-col items-center text-center reveal"
+              style="transition-delay: 150ms"
+            >
+              <div
+                class="w-20 h-20 rounded-full bg-indigo-50 flex items-center justify-center mb-6 shadow-[0_0_0_8px_rgba(255,255,255,1)]"
+              >
+                <i data-lucide="shield-check" class="w-8 h-8 text-primary"></i>
+              </div>
+              <div
+                class="bg-gray-100 text-gray-500 text-xs font-bold px-2.5 py-1 rounded-full mb-3"
+              >
+                LANGKAH 2
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-2">
+                Bayar dengan Aman
+              </h3>
+              <p class="text-gray-500 text-sm">
+                Lakukan checkout melalui sistem aman kami. Kami menerima QRIS,
+                GoPay, Dana, dan Transfer Bank.
+              </p>
+            </div>
+            <div
+              class="relative z-10 flex flex-col items-center text-center reveal"
+              style="transition-delay: 300ms"
+            >
+              <div
+                class="w-20 h-20 rounded-full bg-primary flex items-center justify-center mb-6 shadow-[0_0_0_8px_rgba(255,255,255,1)] relative"
+              >
+                <div
+                  class="absolute inset-0 rounded-full bg-primary animate-ping opacity-20"
+                ></div>
+                <i data-lucide="zap" class="w-8 h-8 text-white"></i>
+              </div>
+              <div
+                class="bg-indigo-100 text-primary text-xs font-bold px-2.5 py-1 rounded-full mb-3"
+              >
+                LANGKAH 3
+              </div>
+              <h3 class="text-xl font-bold text-gray-900 mb-2">
+                Terima Instan
+              </h3>
+              <p class="text-gray-500 text-sm">
+                Kredensial akun Anda akan otomatis dikirim ke email segera
+                setelah pembayaran selesai.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="py-24 bg-surface border-y border-gray-100">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16 reveal">
+            <h2 class="text-3xl font-bold text-gray-900 mb-4">
+              Ulasan Pelanggan Kami
+            </h2>
+            <p class="text-gray-500 max-w-2xl mx-auto">
+              Baca apa kata mereka tentang pengalaman berbelanja di sini.
+            </p>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="ecommerce-card p-8 reveal">
+              <div class="flex text-yellow-400 mb-4">
+                <i data-lucide="star" class="w-5 h-5 fill-current"></i
+                ><i data-lucide="star" class="w-5 h-5 fill-current"></i
+                ><i data-lucide="star" class="w-5 h-5 fill-current"></i
+                ><i data-lucide="star" class="w-5 h-5 fill-current"></i
+                ><i data-lucide="star" class="w-5 h-5 fill-current"></i>
+              </div>
+              <p class="text-gray-700 mb-6 italic">
+                "Dapat akun Netflix-nya gak sampe 2 menit. Prosesnya mulus
+                banget dan harganya tidak ada lawan. Sangat direkomendasikan."
+              </p>
+              <div class="flex items-center gap-3">
+                <img
+                  src="https://i.pravatar.cc/150?img=32"
+                  alt="Sarah J."
+                  class="w-10 h-10 rounded-full bg-gray-200"
+                />
+                <div>
+                  <h4 class="font-bold text-gray-900 text-sm">Sarah J.</h4>
+                  <p class="text-xs text-gray-500">Membeli Netflix Premium</p>
+                </div>
+              </div>
+            </div>
+            <div
+              class="ecommerce-card p-8 reveal"
+              style="transition-delay: 100ms"
+            >
+              <div class="flex text-yellow-400 mb-4">
+                <i data-lucide="star" class="w-5 h-5 fill-current"></i
+                ><i data-lucide="star" class="w-5 h-5 fill-current"></i
+                ><i data-lucide="star" class="w-5 h-5 fill-current"></i
+                ><i data-lucide="star" class="w-5 h-5 fill-current"></i
+                ><i data-lucide="star" class="w-5 h-5 fill-current"></i>
+              </div>
+              <p class="text-gray-700 mb-6 italic">
+                "Aku pake Canva Pro buat bisnis kecilku dan beli di sini
+                menghemat budget bulanan banget. Akunnya berfungsi sempurna
+                tanpa kendala."
+              </p>
+              <div class="flex items-center gap-3">
+                <img
+                  src="https://i.pravatar.cc/150?img=11"
+                  alt="Michael T."
+                  class="w-10 h-10 rounded-full bg-gray-200"
+                />
+                <div>
+                  <h4 class="font-bold text-gray-900 text-sm">Michael T.</h4>
+                  <p class="text-xs text-gray-500">Membeli Canva Pro</p>
+                </div>
+              </div>
+            </div>
+            <div
+              class="ecommerce-card p-8 reveal"
+              style="transition-delay: 200ms"
+            >
+              <div class="flex text-yellow-400 mb-4">
+                <i data-lucide="star" class="w-5 h-5 fill-current"></i
+                ><i data-lucide="star" class="w-5 h-5 fill-current"></i
+                ><i data-lucide="star" class="w-5 h-5 fill-current"></i
+                ><i data-lucide="star" class="w-5 h-5 fill-current"></i
+                ><i data-lucide="star" class="w-5 h-5 fill-current"></i>
+              </div>
+              <p class="text-gray-700 mb-6 italic">
+                "Sempat ragu di awal, tapi pas bayar pake QRIS langsung instan
+                dan Spotify Premium langsung aktif detik itu juga. Bakal
+                langganan terus."
+              </p>
+              <div class="flex items-center gap-3">
+                <img
+                  src="https://i.pravatar.cc/150?img=5"
+                  alt="David K."
+                  class="w-10 h-10 rounded-full bg-gray-200"
+                />
+                <div>
+                  <h4 class="font-bold text-gray-900 text-sm">David K.</h4>
+                  <p class="text-xs text-gray-500">Membeli Spotify Premium</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="py-24 bg-white relative overflow-hidden">
+        <div class="absolute inset-0 bg-primary/5"></div>
+        <div
+          class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center reveal"
+        >
+          <h2
+            class="text-3xl md:text-5xl font-bold text-gray-900 mb-6 tracking-tight"
+          >
+            Mulai nikmati aplikasi premium sekarang.
+          </h2>
+          <p class="text-lg text-gray-600 mb-10 max-w-2xl mx-auto">
+            Bergabunglah dengan komunitas pembelanja cerdas kami yang menikmati
+            fasilitas premium dengan harga terjangkau.
+          </p>
+          <a
+            href="#apps"
+            class="btn-primary px-10 py-4 rounded-full font-bold text-lg inline-flex items-center gap-2 shadow-lg shadow-primary/20"
+            >Jelajahi Aplikasi <i data-lucide="arrow-right" class="w-5 h-5"></i
+          ></a>
+        </div>
+      </section>
+    </div>
+
+    <div id="profile-container" class="hidden"></div>
+
+    <div
+      id="product-modal"
+      class="fixed inset-0 z-[100] hidden items-center justify-center px-4"
+      x-cloak
+    >
+      <div
+        class="absolute inset-0 bg-gray-900/40 backdrop-blur-sm transition-opacity"
+        onclick="closeModal()"
+      ></div>
+
+      <div
+        class="bg-white rounded-[2rem] w-full max-w-[440px] relative z-10 overflow-hidden shadow-2xl animate-modal-enter flex flex-col max-h-[90vh]"
+      >
+        <button
+          onclick="closeModal()"
+          class="absolute top-4 right-4 w-8 h-8 bg-black/10 hover:bg-black/20 text-gray-800 rounded-full flex items-center justify-center z-20 transition-colors"
+        >
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+
+        <div
+          id="modal-header-bg"
+          class="h-40 flex items-center justify-center relative overflow-hidden shrink-0"
+        >
+          <div
+            class="absolute inset-0 bg-gradient-to-br from-black/5 to-transparent"
+          ></div>
+          <div
+            id="modal-logo-container"
+            class="w-20 h-20 rounded-2xl bg-white flex items-center justify-center text-4xl font-black shadow-lg relative z-10 overflow-hidden"
+          ></div>
+        </div>
+
+        <div class="p-6 overflow-y-auto flex-grow custom-scrollbar">
+          <div class="flex flex-col mb-4">
+            <h2
+              id="modal-title"
+              class="text-2xl font-bold text-gray-900 tracking-tight"
+            ></h2>
+            <div class="flex items-center gap-3 mt-2">
+              <div
+                class="flex items-center gap-1 bg-yellow-50 px-2 py-1 rounded text-xs font-medium text-yellow-700"
+              >
+                <i
+                  data-lucide="star"
+                  class="w-3 h-3 fill-yellow-400 text-yellow-400"
+                ></i
+                ><span id="modal-rating"></span>
+              </div>
+              <div
+                class="flex items-center gap-1 bg-emerald-50 px-2 py-1 rounded text-xs font-medium text-emerald-700"
+              >
+                <i data-lucide="package" class="w-3 h-3"></i> Sisa Stok:
+                <span id="modal-stock"></span>
+              </div>
+            </div>
+          </div>
+
+          <p
+            id="modal-short-desc"
+            class="text-gray-500 text-sm mb-6 leading-relaxed"
+          ></p>
+
+          <div class="mb-4">
+            <label
+              class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2"
+              >Pilih Jenis Akun</label
+            >
+            <div class="flex flex-wrap gap-2" id="account-type-selector"></div>
+          </div>
+
+          <div class="mb-6">
+            <label
+              class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-2"
+              >Pilih Durasi</label
+            >
+            <div class="flex gap-2" id="duration-selector"></div>
+          </div>
+
+          <div class="flex items-end justify-between mb-6">
+            <div>
+              <span class="block text-xs text-gray-400 mb-0.5"
+                >Total Harga</span
+              >
+              <span
+                id="modal-price"
+                class="text-2xl font-bold text-gray-900"
+              ></span>
+            </div>
+          </div>
+
+          <div class="flex gap-3 mb-6">
+            <button
+              id="modal-cart-btn"
+              class="w-14 h-14 bg-gray-100 hover:bg-gray-200 text-gray-800 rounded-2xl flex items-center justify-center transition-colors shadow-sm shrink-0"
+            >
+              <i data-lucide="shopping-cart" class="w-6 h-6"></i>
+            </button>
+            <button
+              id="modal-buynow-btn"
+              class="flex-1 bg-primary hover:bg-primaryHover text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-colors shadow-lg shadow-primary/30"
+            >
+              <i data-lucide="zap" class="w-5 h-5"></i> Beli Sekarang
+            </button>
+          </div>
+
+          <div class="border-t border-gray-100 pt-6">
+            <h3 class="font-bold text-gray-900 mb-3">Deskripsi Lengkap</h3>
+            <div
+              id="modal-detailed-desc"
+              class="text-sm text-gray-600 space-y-3 leading-relaxed"
+            ></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="cart-container"></div>
+    <div
+      id="toast"
+      class="fixed bottom-6 left-1/2 transform -translate-x-1/2 bg-gray-900 text-white px-4 py-3 rounded-full shadow-lg text-sm font-medium transition-all duration-300 opacity-0 translate-y-10 z-[200] pointer-events-none flex items-center gap-2"
+    >
+      <i data-lucide="check-circle" class="w-4 h-4 text-emerald-400"></i
+      ><span id="toast-text">Berhasil disalin!</span>
+    </div>
+    <div id="footer-container"></div>
+
+    <script src="components/component.js"></script>
+
+    <script>
+      window.products = {};
+      // State Cart dengan LocalStorage
+      let cartItems = JSON.parse(localStorage.getItem("appStoreCart")) || {};
+
+      function homeApp() {
+        return {
+          allProducts: [],
+          popularProducts: [],
+
+          async init() {
+            await this.fetchProducts();
+          },
+
+          async fetchProducts() {
+            try {
+              const res = await fetch("http://localhost:3000/api/products");
+              if (res.ok) {
+                const data = await res.json();
+
+                data.forEach((item) => {
+                  const minPrice = this.getMinPrice(item);
+                  const totalStock = item.product_variants
+                    ? item.product_variants.reduce(
+                        (a, b) => a + (b.stock_count || 0),
+                        0,
+                      )
+                    : 0;
+                  const dummySold = Math.floor(Math.random() * 500) + 100;
+
+                  window.products[item.id] = {
+                    id: item.id,
+                    name: item.name,
+                    category: item.category,
+                    price: minPrice, // Simpan angka asli
+                    stock: totalStock,
+                    sold: dummySold,
+                    thumbnail_url: item.thumbnail_url,
+                    desc: item.short_description || "",
+                    detailedDesc: item.long_description || "",
+                    variants: item.product_variants || [],
+                  };
+                });
+
+                this.allProducts = data
+                  .map((item) => ({
+                    ...item,
+                    minPrice: this.getMinPrice(item),
+                    dummySold: window.products[item.id].sold,
+                  }))
+                  .filter((p) => p.is_active);
+
+                this.popularProducts = [...this.allProducts]
+                  .sort((a, b) => b.dummySold - a.dummySold)
+                  .slice(0, 4);
+
+                this.$nextTick(() => {
+                  if (window.lucide) lucide.createIcons();
+                });
+              }
+            } catch (e) {
+              console.error(e);
+            }
+          },
+
+          getMinPrice(p) {
+            if (!p.product_variants || p.product_variants.length === 0)
+              return 0;
+            return Math.min(...p.product_variants.map((v) => v.sell_price));
+          },
+
+          formatRupiah(n) {
+            return new Intl.NumberFormat("id-ID", {
+              style: "currency",
+              currency: "IDR",
+              minimumFractionDigits: 0,
+            }).format(n);
+          },
+        };
+      }
+
+      // ==========================================
+      // LOGIKA TAMPILAN PROFIL & HOME
+      // ==========================================
+      function showProfile(event) {
+        if (event) event.preventDefault();
+        document.getElementById("home-view").classList.add("hidden");
+        document.getElementById("profile-container").classList.remove("hidden");
+        const navLinks = document.getElementById("main-nav-links");
+        if (navLinks) navLinks.classList.add("hidden");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      function showHome(event) {
+        if (event) event.preventDefault();
+        document.getElementById("profile-container").classList.add("hidden");
+        document.getElementById("home-view").classList.remove("hidden");
+        const navLinks = document.getElementById("main-nav-links");
+        if (navLinks) navLinks.classList.remove("hidden");
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      // ==========================================
+      // LOGIKA MODAL POPUP PRODUK
+      // ==========================================
+
+      function openModal(id) {
+        const p = window.products[id];
+        if (!p) return;
+
+        document.getElementById("modal-logo-container").innerHTML =
+          `<img src="${p.thumbnail_url}" class="w-full h-full object-cover rounded-2xl" onerror="this.style.display='none'">`;
+        document.getElementById("modal-title").innerText = p.name;
+        document.getElementById("modal-stock").innerText = p.stock;
+        document.getElementById("modal-short-desc").innerText = p.desc;
+        document.getElementById("modal-detailed-desc").innerHTML =
+          p.detailedDesc;
+        document.getElementById("modal-rating").innerText = "4.9"; // Dummy rating
+
+        // Render Opsi Jenis Akun (Unik)
+        const typeSelector = document.getElementById("account-type-selector");
+        const uniqueTypes = [...new Set(p.variants.map((v) => v.account_type))];
+        typeSelector.innerHTML = uniqueTypes
+          .map(
+            (type, i) => `
+            <button onclick="selectVariant(this, '${id}')" 
+              class="px-3 py-2 rounded-xl text-sm font-bold flex-1 min-w-[30%] transition-all border ${i === 0 ? "border-2 border-primary bg-primary/5 text-primary" : "border-gray-200 text-gray-500 hover:border-gray-300"}">
+              ${type}
+            </button>
+          `,
+          )
+          .join("");
+
+        // Render Opsi Durasi (Unik)
+        const durSelector = document.getElementById("duration-selector");
+        const uniqueDurations = [...new Set(p.variants.map((v) => v.duration))];
+        durSelector.innerHTML = uniqueDurations
+          .map(
+            (dur, i) => `
+            <button onclick="selectDuration(this, '${id}')" 
+              class="flex-1 py-2 border rounded-xl text-sm transition-all ${i === 0 ? "border-2 border-primary bg-primary/5 text-primary font-bold" : "border-gray-200 text-gray-500 font-medium hover:border-gray-300"}">
+              ${dur}
+            </button>
+          `,
+          )
+          .join("");
+
+        // Hitung harga pertama kali buka
+        updateModalPrice(id);
+
+        // Bind Button Add to Cart
+        document.getElementById("modal-cart-btn").onclick = (e) =>
+          addToCartFromModal(e, id);
+        document.getElementById("modal-buynow-btn").onclick = (e) => {
+          addToCartFromModal(e, id);
+          closeModal();
+          openCart();
+        };
+
+        document.body.classList.add("modal-open");
+        document.getElementById("product-modal").classList.remove("hidden");
+        document.getElementById("product-modal").classList.add("flex");
+        lucide.createIcons();
+      }
+
+      function updateModalPrice(appId) {
+        const product = window.products[appId];
+        if (!product) return;
+
+        const typeBtn = document.querySelector(
+          "#account-type-selector button.border-primary",
+        );
+        const durationBtn = document.querySelector(
+          "#duration-selector button.border-primary",
+        );
+
+        const type = typeBtn ? typeBtn.innerText.trim() : null;
+        const duration = durationBtn ? durationBtn.innerText.trim() : null;
+
+        // Cari varian yang cocok dengan tipe & durasi
+        const variant = product.variants.find(
+          (v) => v.account_type === type && v.duration === duration,
+        );
+        let price = 0;
+
+        if (variant) {
+          price = variant.sell_price;
+        } else {
+          // Jika kombinasi tidak ada, cari varian pertama yang tipenya cocok
+          const fallback =
+            product.variants.find((v) => v.account_type === type) ||
+            product.variants[0];
+          if (fallback) price = fallback.sell_price;
+        }
+
+        document.getElementById("modal-price").innerText =
+          new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            minimumFractionDigits: 0,
+          }).format(price);
+      }
+
+      function selectVariant(el, appId) {
+        document
+          .querySelectorAll("#account-type-selector button")
+          .forEach((btn) => {
+            btn.className =
+              "px-3 py-2 rounded-xl text-sm font-bold flex-1 min-w-[30%] transition-all border border-gray-200 text-gray-500 hover:border-gray-300";
+          });
+        el.className =
+          "px-3 py-2 rounded-xl text-sm font-bold flex-1 min-w-[30%] transition-all border-2 border-primary bg-primary/5 text-primary";
+        updateModalPrice(appId);
+      }
+
+      function selectDuration(el, appId) {
+        document
+          .querySelectorAll("#duration-selector button")
+          .forEach((btn) => {
+            btn.className =
+              "flex-1 py-2 border rounded-xl text-sm transition-all border-gray-200 text-gray-500 font-medium hover:border-gray-300";
+          });
+        el.className =
+          "flex-1 py-2 border-2 border-primary bg-primary/5 text-primary font-bold rounded-xl text-sm transition-all";
+        updateModalPrice(appId);
+      }
+
+      function closeModal() {
+        const sidebar = document.getElementById("cart-sidebar");
+        if (!sidebar || sidebar.classList.contains("translate-x-full")) {
+          document.body.classList.remove("modal-open");
+        }
+        document.getElementById("product-modal").classList.add("hidden");
+        document.getElementById("product-modal").classList.remove("flex");
+      }
+
+      // ==========================================
+      // LOGIKA KERANJANG (CART) LENGKAP
+      // ==========================================
+
+      function saveCart() {
+        localStorage.setItem("appStoreCart", JSON.stringify(cartItems));
+      }
+
+      function updateCartCounter() {
+        const totalQty = Object.values(cartItems).reduce(
+          (sum, item) => sum + item.qty,
+          0,
+        );
+        const cartCounter = document.getElementById("cart-counter");
+
+        if (cartCounter) {
+          cartCounter.innerText = totalQty;
+          cartCounter.classList.add("scale-150");
+          setTimeout(() => cartCounter.classList.remove("scale-150"), 200);
+        }
+
+        const sidebar = document.getElementById("cart-sidebar");
+        if (sidebar && !sidebar.classList.contains("translate-x-full")) {
+          renderCart();
+        }
+        saveCart();
+      }
+
+      // Dari tombol Add (Card Luar)
+      function addToCart(event, appId) {
+        if (event) event.stopPropagation();
+        const product = window.products[appId];
+        if (!product) return;
+
+        let type = "Private";
+        let duration = "1 Bulan";
+        let price = product.price || 0; // fallback
+
+        if (product.variants && product.variants.length > 0) {
+          type = product.variants[0].account_type;
+          duration = product.variants[0].duration;
+          price = product.variants[0].sell_price;
+        }
+
+        const cartKey = `${appId}_${type}_${duration}`;
+
+        if (cartItems[cartKey]) {
+          cartItems[cartKey].qty++;
+        } else {
+          cartItems[cartKey] = { appId, type, duration, price, qty: 1 };
+        }
+        updateCartCounter();
+        showToastMessage("Berhasil dimasukkan ke keranjang!");
+      }
+
+      // Dari Modal (Sesuai Tombol yang dipilih)
+      function addToCartFromModal(event, appId) {
+        if (event) event.stopPropagation();
+        const product = window.products[appId];
+        if (!product) return;
+
+        const typeBtn = document.querySelector(
+          "#account-type-selector button.border-primary",
+        );
+        const durationBtn = document.querySelector(
+          "#duration-selector button.border-primary",
+        );
+
+        const type = typeBtn
+          ? typeBtn.innerText.trim()
+          : product.variants[0]?.account_type || "Private";
+        const duration = durationBtn
+          ? durationBtn.innerText.trim()
+          : product.variants[0]?.duration || "1 Bulan";
+
+        let price = 0;
+        const variant = product.variants.find(
+          (v) => v.account_type === type && v.duration === duration,
+        );
+        if (variant) {
+          price = variant.sell_price;
+        } else {
+          const fallback =
+            product.variants.find((v) => v.account_type === type) ||
+            product.variants[0];
+          if (fallback) price = fallback.sell_price;
+        }
+
+        const cartKey = `${appId}_${type}_${duration}`;
+
+        if (cartItems[cartKey]) {
+          cartItems[cartKey].qty++;
+        } else {
+          cartItems[cartKey] = { appId, type, duration, price, qty: 1 };
+        }
+        updateCartCounter();
+        showToastMessage("Berhasil dimasukkan ke keranjang!");
+      }
+
+      function openCart() {
+        document.body.classList.add("modal-open");
+        const overlay = document.getElementById("cart-overlay");
+        const sidebar = document.getElementById("cart-sidebar");
+
+        if (overlay) {
+          overlay.classList.remove("hidden");
+          setTimeout(() => {
+            overlay.classList.remove("opacity-0");
+          }, 10);
+        }
+        if (sidebar) sidebar.classList.remove("translate-x-full");
+
+        renderCart();
+      }
+
+      function closeCart() {
+        const modal = document.getElementById("product-modal");
+        if (!modal || modal.classList.contains("hidden")) {
+          document.body.classList.remove("modal-open");
+        }
+
+        const overlay = document.getElementById("cart-overlay");
+        const sidebar = document.getElementById("cart-sidebar");
+
+        if (overlay) overlay.classList.add("opacity-0");
+        if (sidebar) sidebar.classList.add("translate-x-full");
+
+        setTimeout(() => {
+          if (overlay) overlay.classList.add("hidden");
+        }, 300);
+      }
+
+      function removeFromCart(cartKey) {
+        delete cartItems[cartKey];
+        updateCartCounter();
+      }
+
+      function updateQty(event, cartKey, delta) {
+        if (event) event.stopPropagation();
+        if (cartItems[cartKey]) {
+          cartItems[cartKey].qty += delta;
+          if (cartItems[cartKey].qty <= 0) delete cartItems[cartKey];
+          updateCartCounter();
+        }
+      }
+
+      function renderCart() {
+        const container = document.getElementById("cart-items-container");
+        const totalEl = document.getElementById("cart-total-price");
+        if (!container || !totalEl) return;
+
+        container.innerHTML = "";
+        let total = 0;
+
+        if (Object.keys(cartItems).length === 0) {
+          container.innerHTML = `
+            <div class="flex flex-col items-center justify-center h-full text-center text-gray-400 mt-20">
+                <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4">
+                    <i data-lucide="shopping-cart" class="w-10 h-10 text-gray-300"></i>
+                </div>
+                <h3 class="text-gray-900 font-bold mb-1">Keranjang Kosong</h3>
+                <p class="text-sm mb-6">Yuk, tambahkan aplikasi incaranmu!</p>
+                <button onclick="closeCart(); showHome(event);" class="text-primary font-bold text-sm bg-primary/10 px-6 py-2 rounded-full hover:bg-primary/20 transition-colors">Mulai Belanja</button>
+            </div>
+          `;
+          totalEl.innerText = "Rp 0";
+          lucide.createIcons({ root: container });
+          return;
+        }
+
+        Object.keys(cartItems).forEach((cartKey) => {
+          const item = cartItems[cartKey];
+          const product = window.products[item.appId];
+
+          const productName = product ? product.name : "Aplikasi...";
+          const thumbHtml =
+            product && product.thumbnail_url
+              ? `<img src="${product.thumbnail_url}" class="w-full h-full object-cover">`
+              : `<span class="text-primary font-bold text-xl">${productName.charAt(0)}</span>`;
+
+          const itemTotal = item.price * item.qty;
+          total += itemTotal;
+
+          const itemHTML = `
+            <div class="bg-white p-4 rounded-2xl border border-gray-100 shadow-sm flex gap-4 relative group animate-modal-enter">
+                <div class="w-16 h-16 rounded-xl bg-surface border flex items-center justify-center flex-shrink-0 overflow-hidden">
+                    ${thumbHtml}
+                </div>
+                <div class="flex flex-col justify-center flex-grow pr-4">
+                    <h4 class="font-bold text-gray-900 text-sm mb-0.5">${productName}</h4>
+                    <span class="text-[11px] font-medium px-2 py-0.5 bg-gray-100 text-gray-600 rounded w-fit mb-2">${item.type} • ${item.duration}</span>
+                    <div class="flex items-center justify-between w-full mt-auto">
+                        <span class="font-bold text-primary text-sm">${new Intl.NumberFormat("id-ID", { style: "currency", currency: "IDR", minimumFractionDigits: 0 }).format(itemTotal)}</span>
+                        <div class="flex items-center gap-2 bg-gray-50 rounded-lg p-1 border border-gray-100">
+                            <button onclick="updateQty(event, '${cartKey}', -1)" class="w-6 h-6 flex items-center justify-center bg-white rounded shadow-sm text-gray-500 hover:text-primary transition-colors">-</button>
+                            <span class="text-xs font-bold w-4 text-center text-gray-700">${item.qty}</span>
+                            <button onclick="updateQty(event, '${cartKey}', 1)" class="w-6 h-6 flex items-center justify-center bg-white rounded shadow-sm text-gray-500 hover:text-primary transition-colors">+</button>
+                        </div>
+                    </div>
+                </div>
+                <button onclick="removeFromCart('${cartKey}')" class="absolute top-3 right-3 text-gray-300 hover:text-red-500 transition-colors">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                </button>
+            </div>
+          `;
+          container.insertAdjacentHTML("beforeend", itemHTML);
+        });
+
+        totalEl.innerText = new Intl.NumberFormat("id-ID", {
+          style: "currency",
+          currency: "IDR",
+          minimumFractionDigits: 0,
+        }).format(total);
+        lucide.createIcons({ root: container });
+      }
+
+      function showToastMessage(msg) {
+        const toast = document.getElementById("toast");
+        if (toast) {
+          document.getElementById("toast-text").innerText = msg;
+          toast.classList.remove("opacity-0", "translate-y-10");
+          setTimeout(() => {
+            toast.classList.add("opacity-0", "translate-y-10");
+          }, 3000);
+        }
+      }
+
+      // Intersection Observer Logic & Setup Awal
+      document.addEventListener("DOMContentLoaded", () => {
+        setTimeout(() => {
+          updateCartCounter();
+        }, 500);
+
+        lucide.createIcons();
+        const obs = new IntersectionObserver(
+          (es) => {
+            es.forEach((e) => {
+              if (e.isIntersecting) e.target.classList.add("active");
+            });
+          },
+          { threshold: 0.1 },
+        );
+        document.querySelectorAll(".reveal").forEach((el) => obs.observe(el));
+      });
+    </script>
+  </body>
+</html>

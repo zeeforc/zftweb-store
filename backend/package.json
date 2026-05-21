@@ -1,0 +1,20 @@
+{
+  "name": "zftstoree-web",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@fastify/cors": "^11.2.0",
+    "@libsql/client": "^0.17.3",
+    "dotenv": "^17.3.1",
+    "fastify": "^5.7.4",
+    "midtrans-client": "^1.4.3"
+  }
+}
