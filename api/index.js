@@ -459,6 +459,137 @@ module.exports = async (req, res) => {
       );
     }
 
+    // POST /api/simulate-payment - Manual trigger untuk test (hapus di production)
+    if (path === "/api/simulate-payment" && req.method === "POST") {
+      const { merchant_ref } = body;
+      if (!merchant_ref) {
+        res.statusCode = 400;
+        return res.end(JSON.stringify({ message: "merchant_ref diperlukan" }));
+      }
+
+      // Update order jadi paid
+      await executeSQL("UPDATE orders SET status='paid' WHERE voucher_id=?", [
+        merchant_ref,
+      ]);
+      const { rows: orders } = await executeSQL(
+        "SELECT o.*, pv.account_type, pv.duration, p.name as product_name FROM orders o LEFT JOIN product_variants pv ON o.variant_id=pv.id LEFT JOIN products p ON pv.product_id=p.id WHERE o.voucher_id=?",
+        [merchant_ref],
+      );
+
+      let deliveredAccounts = [];
+
+      for (const order of orders) {
+        const { rows: stock } = await executeSQL(
+          "SELECT * FROM inventory WHERE variant_id=? AND status='available' LIMIT 1",
+          [order.variant_id],
+        );
+        if (stock && stock.length > 0) {
+          const s = stock[0];
+          const accountData = {
+            email: s.email,
+            password: s.password,
+            profile_name: s.profile_name,
+            pin: s.pin,
+          };
+          await executeSQL(
+            "INSERT INTO delivered_items (order_id, account_details) VALUES (?,?)",
+            [order.id, JSON.stringify(accountData)],
+          );
+          await executeSQL("UPDATE inventory SET status='sold' WHERE id=?", [
+            s.id,
+          ]);
+          await executeSQL(
+            "UPDATE product_variants SET stock_count=stock_count-1 WHERE id=? AND stock_count>0",
+            [order.variant_id],
+          );
+          deliveredAccounts.push({
+            product_name: order.product_name || "Produk Digital",
+            account_type: order.account_type || "",
+            duration: order.duration || "",
+            ...accountData,
+          });
+        }
+      }
+
+      // Kirim email
+      let emailResult = "no_accounts";
+      if (deliveredAccounts.length > 0 && orders[0]?.user_email) {
+        const customerEmail = orders[0].user_email;
+        const RESEND_API_KEY = process.env.RESEND_API_KEY || "";
+        const fromEmail =
+          process.env.RESEND_FROM_EMAIL || "ZFTStore <noreply@zfts.store>";
+
+        if (RESEND_API_KEY) {
+          let accountsHtml = deliveredAccounts
+            .map(
+              (acc) => `
+            <div style="background:#f9fafb;border:1px solid #e5e7eb;border-radius:12px;padding:20px;margin-bottom:16px;">
+              <h3 style="margin:0 0 12px 0;color:#111827;font-size:16px;">${acc.product_name}</h3>
+              <p style="margin:0 0 4px 0;color:#6b7280;font-size:13px;">Jenis: ${acc.account_type} | Durasi: ${acc.duration}</p>
+              <table style="width:100%;margin-top:12px;border-collapse:collapse;">
+                ${acc.email ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;width:100px;">Email</td><td style="padding:6px 0;color:#111827;font-size:13px;font-weight:600;">${acc.email}</td></tr>` : ""}
+                ${acc.password ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;width:100px;">Password</td><td style="padding:6px 0;color:#111827;font-size:13px;font-weight:600;">${acc.password}</td></tr>` : ""}
+                ${acc.profile_name ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;width:100px;">Profil</td><td style="padding:6px 0;color:#111827;font-size:13px;font-weight:600;">${acc.profile_name}</td></tr>` : ""}
+                ${acc.pin ? `<tr><td style="padding:6px 0;color:#6b7280;font-size:13px;width:100px;">PIN</td><td style="padding:6px 0;color:#111827;font-size:13px;font-weight:600;">${acc.pin}</td></tr>` : ""}
+              </table>
+            </div>
+          `,
+            )
+            .join("");
+
+          const emailHtml = `
+            <div style="font-family:'Segoe UI',Arial,sans-serif;max-width:600px;margin:0 auto;padding:40px 20px;">
+              <div style="text-align:center;margin-bottom:32px;">
+                <h1 style="color:#4F46E5;font-size:24px;margin:0;">ZFTStore</h1>
+                <p style="color:#6b7280;font-size:14px;margin-top:8px;">Pembayaran Berhasil!</p>
+              </div>
+              <div style="background:#ffffff;border:1px solid #e5e7eb;border-radius:16px;padding:32px;">
+                <h2 style="color:#111827;font-size:20px;margin:0 0 8px 0;">Halo!</h2>
+                <p style="color:#6b7280;font-size:14px;line-height:1.6;margin:0 0 24px 0;">Berikut detail akun Anda:</p>
+                <p style="color:#6b7280;font-size:12px;margin:0 0 16px 0;">Order: <strong>${merchant_ref}</strong></p>
+                ${accountsHtml}
+              </div>
+              <p style="text-align:center;color:#9ca3af;font-size:12px;margin-top:24px;">&copy; 2026 ZFTStore</p>
+            </div>
+          `;
+
+          try {
+            const emailRes = await fetch("https://api.resend.com/emails", {
+              method: "POST",
+              headers: {
+                Authorization: "Bearer " + RESEND_API_KEY,
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                from: fromEmail,
+                to: [customerEmail],
+                subject:
+                  "Detail Akun Anda - " +
+                  deliveredAccounts[0].product_name +
+                  " | ZFTStore",
+                html: emailHtml,
+              }),
+            });
+            const emailData = await emailRes.json();
+            emailResult = emailData;
+          } catch (emailErr) {
+            emailResult = { error: emailErr.message };
+          }
+        } else {
+          emailResult = "no_api_key";
+        }
+      }
+
+      return res.end(
+        JSON.stringify({
+          success: true,
+          delivered: deliveredAccounts,
+          email_result: emailResult,
+          customer_email: orders[0]?.user_email,
+        }),
+      );
+    }
+
     // GET /api/orders/status
     if (path === "/api/orders/status" && req.method === "GET") {
       const merchant_ref = query.merchant_ref;
