@@ -1,5 +1,11 @@
 // Vercel Serverless Function
-const { createClient } = require("@libsql/client/web");
+let createClient;
+let initError = null;
+try {
+  createClient = require("@libsql/client/web").createClient;
+} catch (e) {
+  initError = e.message;
+}
 
 let db;
 function getDb() {
@@ -27,6 +33,14 @@ module.exports = async (req, res) => {
     return res.end();
   }
 
+  // If module failed to load
+  if (initError) {
+    res.statusCode = 500;
+    return res.end(
+      JSON.stringify({ error: "Module init failed", detail: initError }),
+    );
+  }
+
   // Parse URL
   const url = new URL(req.url, `http://${req.headers.host}`);
   const path = url.pathname;
@@ -49,6 +63,19 @@ module.exports = async (req, res) => {
 
   try {
     const database = getDb();
+
+    // DEBUG endpoint
+    if (path === "/api/debug" && req.method === "GET") {
+      return res.end(
+        JSON.stringify({
+          ok: true,
+          initError: initError,
+          env_url: process.env.TURSO_DATABASE_URL ? "SET" : "NOT SET",
+          env_token: process.env.TURSO_AUTH_TOKEN ? "SET" : "NOT SET",
+          node_version: process.version,
+        }),
+      );
+    }
 
     // ============ ROUTES ============
 
