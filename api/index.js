@@ -1,5 +1,11 @@
 // Vercel Serverless Function for ZFTStoree
-const { createClient } = require("@libsql/client/web");
+let createClient;
+try {
+  createClient = require("@libsql/client/web").createClient;
+} catch (e) {
+  // Fallback to main export
+  createClient = require("@libsql/client").createClient;
+}
 
 let db;
 function getDb() {
