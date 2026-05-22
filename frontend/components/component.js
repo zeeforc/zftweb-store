@@ -10,10 +10,10 @@ function renderNavbar() {
           <!-- Kiri: Logo & Search -->
           <div class="flex items-center gap-8 flex-1">
             <a href="#" onclick="showHome(event)" class="flex items-center gap-2 text-xl font-bold text-gray-900 tracking-tight">
-              <div class="w-8 h-8 rounded-lg bg-primary flex items-center justify-center text-white">
-                <i data-lucide="layers" class="w-5 h-5"></i>
+              <div class="w-10 h-10 flex items-center justify-center text-white">
+              <img src="./assets/logo.webp" alt="Logo">
               </div>
-              AppStoreHub
+              ZFTStore
             </a>
             <div class="hidden lg:flex flex-1 max-w-md relative">
               <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
