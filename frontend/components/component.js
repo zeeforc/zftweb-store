@@ -25,10 +25,10 @@ function renderNavbar() {
 
           <!-- Tengah: Nav Links -->
           <div class="hidden md:flex items-center justify-center gap-8 flex-1" id="main-nav-links">
-            <a href="#apps" onclick="showHome(event)" class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Aplikasi</a>
+            <a href="#pricing" onclick="showHome(event)" class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Aplikasi</a>
             <a href="#categories" onclick="showHome(event)" class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Kategori</a>
-            <a href="#pricing" onclick="showHome(event)" class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Harga</a>
-            <a href="#support" onclick="showHome(event)" class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Bantuan</a>
+            <a href="#tentang-kami" onclick="showHome(event)" class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">Tentang</a>
+            <a href="#faq" onclick="showHome(event)" class="text-sm font-medium text-gray-600 hover:text-primary transition-colors">FAQ</a>
           </div>
 
           <!-- Kanan: Icons & Auth -->

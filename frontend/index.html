@@ -1513,7 +1513,24 @@
         document.getElementById("home-view").classList.remove("hidden");
         const navLinks = document.getElementById("main-nav-links");
         if (navLinks) navLinks.classList.remove("hidden");
-        window.scrollTo({ top: 0, behavior: "smooth" });
+
+        // Kalau link punya hash (#section), scroll ke section itu
+        const href =
+          event &&
+          event.currentTarget &&
+          event.currentTarget.getAttribute("href");
+        if (href && href.startsWith("#") && href.length > 1) {
+          setTimeout(() => {
+            const target = document.querySelector(href);
+            if (target) {
+              target.scrollIntoView({ behavior: "smooth", block: "start" });
+            } else {
+              window.scrollTo({ top: 0, behavior: "smooth" });
+            }
+          }, 50);
+        } else {
+          window.scrollTo({ top: 0, behavior: "smooth" });
+        }
       }
 
       // ==========================================
